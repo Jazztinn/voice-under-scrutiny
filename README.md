@@ -17,8 +17,9 @@ No login. Pitches (audio + transcript) are stored **locally in your browser** vi
 - Next.js (App Router, TypeScript) + Tailwind CSS
 - `MediaRecorder` for mic capture, IndexedDB (`idb`) for local history
 - `POST /api/transcribe` proxies to Groq Whisper (key stays server-side)
-- Fallback: `@huggingface/transformers` runs Whisper (`whisper-tiny.en`) in a Web
-  Worker when Groq is unavailable — no key, no server, first run downloads ~40MB
+- Fallback: `@huggingface/transformers` runs Whisper (`whisper-small.en`, WebGPU
+  when available) in a Web Worker when Groq is unavailable — no key, no server,
+  first run downloads the quantized model (~150MB, cached after)
 
 ## Local development
 

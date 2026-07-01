@@ -2,31 +2,58 @@
 // and inference never block the UI. Used as a fallback when the Groq route is
 // unavailable (no server key). Receives mono 16kHz Float32 samples, posts back
 // progress, then the transcript.
-import { pipeline, env, type AutomaticSpeechRecognitionPipeline } from "@huggingface/transformers";
+import {
+  pipeline,
+  env,
+  type AutomaticSpeechRecognitionPipeline,
+  type ProgressInfo,
+} from "@huggingface/transformers";
 
 // Always fetch models from the HF hub (no local model files bundled).
 env.allowLocalModels = false;
 
-const MODEL = "Xenova/whisper-tiny.en";
+// small.en is far more accurate than tiny while still browser-friendly.
+const MODEL = "Xenova/whisper-small.en";
 
 let transcriber: AutomaticSpeechRecognitionPipeline | null = null;
+
+function progress_callback(p: ProgressInfo) {
+  if (p.status === "progress") {
+    self.postMessage({ type: "progress", file: p.file, progress: p.progress ?? 0 });
+  }
+}
+
+async function getTranscriber(): Promise<AutomaticSpeechRecognitionPipeline> {
+  if (transcriber) return transcriber;
+
+  const hasGPU =
+    typeof navigator !== "undefined" && "gpu" in navigator && !!navigator.gpu;
+
+  try {
+    transcriber = (await pipeline("automatic-speech-recognition", MODEL, {
+      device: hasGPU ? "webgpu" : "wasm",
+      dtype: "q8", // quantized: smaller download, faster inference
+      progress_callback,
+    })) as AutomaticSpeechRecognitionPipeline;
+  } catch {
+    // WebGPU can fail on some machines — retry on wasm.
+    transcriber = (await pipeline("automatic-speech-recognition", MODEL, {
+      device: "wasm",
+      dtype: "q8",
+      progress_callback,
+    })) as AutomaticSpeechRecognitionPipeline;
+  }
+  return transcriber;
+}
 
 self.onmessage = async (e: MessageEvent<{ samples: Float32Array }>) => {
   const { samples } = e.data;
   try {
-    if (!transcriber) {
-      transcriber = (await pipeline("automatic-speech-recognition", MODEL, {
-        progress_callback: (p: { status: string; file?: string; progress?: number }) => {
-          if (p.status === "progress") {
-            self.postMessage({ type: "progress", file: p.file, progress: p.progress ?? 0 });
-          }
-        },
-      })) as AutomaticSpeechRecognitionPipeline;
-    }
+    const asr = await getTranscriber();
 
     self.postMessage({ type: "status", status: "transcribing" });
 
-    const out = await transcriber(samples, {
+    const out = await asr(samples, {
       chunk_length_s: 30,
       stride_length_s: 5,
     });

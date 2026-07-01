@@ -44,8 +44,8 @@ export async function POST(req: Request) {
   // The endpoint needs a filename with a recognized audio extension.
   const ext = (file.type.split("/")[1] || "webm").split(";")[0];
   upstream.append("file", file, `pitch.${ext}`);
-  // Groq's OpenAI-compatible Whisper endpoint. Turbo = fast + generous free tier.
-  upstream.append("model", "whisper-large-v3-turbo");
+  // Groq's OpenAI-compatible Whisper endpoint. large-v3 = highest accuracy.
+  upstream.append("model", "whisper-large-v3");
 
   try {
     const res = await fetch(
