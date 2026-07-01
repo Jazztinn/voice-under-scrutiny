@@ -9,6 +9,9 @@ import FeedbackSlot from "@/components/FeedbackSlot";
 import { randomTopic } from "@/lib/topics";
 import { addPitch, type Pitch } from "@/lib/db";
 import { formatDuration } from "@/lib/format";
+import { transcribeLocally } from "@/lib/localTranscribe";
+
+type Source = "groq" | "in-browser" | null;
 
 type Stage = "idle" | "recorded";
 
@@ -20,6 +23,8 @@ export default function PracticePage() {
   const [transcript, setTranscript] = useState<string | null>(null);
   const [transcribing, setTranscribing] = useState(false);
   const [transcribeError, setTranscribeError] = useState<string | null>(null);
+  const [statusText, setStatusText] = useState<string | null>(null);
+  const [source, setSource] = useState<Source>(null);
 
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -37,6 +42,8 @@ export default function PracticePage() {
     setRecording(null);
     setTranscript(null);
     setTranscribeError(null);
+    setStatusText(null);
+    setSource(null);
     setSaved(false);
     setSaveError(null);
     setStage("idle");
@@ -46,31 +53,56 @@ export default function PracticePage() {
     setRecording(rec);
     setTranscript(null);
     setTranscribeError(null);
+    setStatusText(null);
+    setSource(null);
     setSaved(false);
     setSaveError(null);
     setStage("recorded");
+  }
+
+  // Try Groq (server) first; if it's unavailable (no key / error), fall back to
+  // in-browser Whisper so transcription always works.
+  async function tryGroq(blob: Blob): Promise<string> {
+    const form = new FormData();
+    form.append("audio", blob, "pitch");
+    const res = await fetch("/api/transcribe", { method: "POST", body: form });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data?.error ?? "Transcription failed.");
+    return data.transcript ?? "";
   }
 
   async function transcribe() {
     if (!recording) return;
     setTranscribing(true);
     setTranscribeError(null);
+    setStatusText("Transcribing with Groq…");
     try {
-      const form = new FormData();
-      form.append("audio", recording.blob, "pitch");
-      const res = await fetch("/api/transcribe", {
-        method: "POST",
-        body: form,
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error ?? "Transcription failed.");
-      setTranscript(data.transcript ?? "");
-    } catch (err) {
-      setTranscribeError(
-        err instanceof Error ? err.message : "Transcription failed."
-      );
+      const text = await tryGroq(recording.blob);
+      setTranscript(text);
+      setSource("groq");
+    } catch {
+      // Groq unavailable — fall back to in-browser Whisper.
+      try {
+        setStatusText("Groq unavailable — transcribing in your browser…");
+        const text = await transcribeLocally(recording.blob, (s) => {
+          if (s.stage === "loading-model") {
+            setStatusText(
+              `Downloading speech model (first run only)… ${s.progress}%`
+            );
+          } else {
+            setStatusText("Transcribing in your browser…");
+          }
+        });
+        setTranscript(text);
+        setSource("in-browser");
+      } catch (err) {
+        setTranscribeError(
+          err instanceof Error ? err.message : "Transcription failed."
+        );
+      }
     } finally {
       setTranscribing(false);
+      setStatusText(null);
     }
   }
 
@@ -132,6 +164,8 @@ export default function PracticePage() {
             transcript={transcript}
             loading={transcribing}
             error={transcribeError}
+            statusText={statusText}
+            source={source}
           />
 
           <FeedbackSlot />

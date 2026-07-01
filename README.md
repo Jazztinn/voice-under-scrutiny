@@ -5,7 +5,9 @@ A web app for practicing pitches and public speaking. The loop:
 1. **Get a random topic** — from a curated pool of pitch / speaking prompts.
 2. **Record your pitch** — straight from the mic in the browser.
 3. **Listen back** — be your own critic before anyone else is.
-4. **Transcribe** — Groq Whisper turns your audio into text.
+4. **Transcribe** — Groq Whisper turns your audio into text. If no Groq key is
+   configured, it automatically falls back to **in-browser Whisper** (no key, runs
+   fully on-device).
 5. **Log it** — every attempt is saved locally so you can track improvement.
 
 No login. Pitches (audio + transcript) are stored **locally in your browser** via IndexedDB — nothing is uploaded except the audio sent for transcription.
@@ -15,6 +17,8 @@ No login. Pitches (audio + transcript) are stored **locally in your browser** vi
 - Next.js (App Router, TypeScript) + Tailwind CSS
 - `MediaRecorder` for mic capture, IndexedDB (`idb`) for local history
 - `POST /api/transcribe` proxies to Groq Whisper (key stays server-side)
+- Fallback: `@huggingface/transformers` runs Whisper (`whisper-tiny.en`) in a Web
+  Worker when Groq is unavailable — no key, no server, first run downloads ~40MB
 
 ## Local development
 
