@@ -8,10 +8,10 @@ export const runtime = "nodejs";
 const MAX_BYTES = 4.5 * 1024 * 1024;
 
 export async function POST(req: Request) {
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
-      { error: "Server missing OPENAI_API_KEY." },
+      { error: "Server missing GROQ_API_KEY." },
       { status: 500 }
     );
   }
@@ -41,14 +41,15 @@ export async function POST(req: Request) {
   }
 
   const upstream = new FormData();
-  // OpenAI needs a filename with a recognized audio extension.
+  // The endpoint needs a filename with a recognized audio extension.
   const ext = (file.type.split("/")[1] || "webm").split(";")[0];
   upstream.append("file", file, `pitch.${ext}`);
-  upstream.append("model", "whisper-1");
+  // Groq's OpenAI-compatible Whisper endpoint. Turbo = fast + generous free tier.
+  upstream.append("model", "whisper-large-v3-turbo");
 
   try {
     const res = await fetch(
-      "https://api.openai.com/v1/audio/transcriptions",
+      "https://api.groq.com/openai/v1/audio/transcriptions",
       {
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}` },
