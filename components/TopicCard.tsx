@@ -17,7 +17,7 @@ export default function TopicCard({ topic, onNewTopic, disabled }: Props) {
   // `display` is what the card shows: real topic when idle, random flashes while rolling.
   const [display, setDisplay] = useState(topic);
   const [rolling, setRolling] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const rollTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const stopTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -38,7 +38,7 @@ export default function TopicCard({ topic, onNewTopic, disabled }: Props) {
 
   function handleNewTopic() {
     if (rolling || disabled) return;
-    setOpen(false);
+    setOpen(true);
     setRolling(true);
     // Flash random topics for a quick slot-machine spin.
     rollTimer.current = setInterval(() => {
@@ -53,7 +53,7 @@ export default function TopicCard({ topic, onNewTopic, disabled }: Props) {
   }
 
   return (
-    <div className="w-full overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-sm">
+    <div className="h-full w-full overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-sm">
       <div className="flex items-center justify-between">
         <span className="chip">Your topic</span>
         <button
@@ -101,7 +101,13 @@ export default function TopicCard({ topic, onNewTopic, disabled }: Props) {
             }`}
           >
             <div className="overflow-hidden">
-              <div className="rounded-2xl border border-border bg-muted/40 p-4">
+              <div
+                className="rounded-2xl border border-border bg-muted/40 p-4"
+                style={{
+                  boxShadow:
+                    "inset 0 2px 4px rgba(0,0,0,0.08), inset 0 1px 2px rgba(0,0,0,0.06)",
+                }}
+              >
                 <span className="chip">Scenario</span>
                 <p className="mt-2 text-sm leading-relaxed text-foreground/80">
                   {detail.scenario}

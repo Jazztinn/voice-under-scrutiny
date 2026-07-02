@@ -141,8 +141,8 @@ export default function PracticePage() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
-      <div className="grid gap-6 md:grid-cols-2 md:items-start">
+    <main className="flex w-full flex-1 flex-col px-6 py-8">
+      <div className="grid flex-1 gap-6 md:grid-cols-2 md:items-stretch">
         <TopicCard
           topic={topic || "…"}
           onNewTopic={newTopic}

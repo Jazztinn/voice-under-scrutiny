@@ -38,6 +38,7 @@ const STRANDS = [
 ];
 
 const VERTS = 160;
+const RING_SCALE = 3;
 
 export default function Recorder({ onComplete, disabled }: Props) {
   const [isRecording, setIsRecording] = useState(false);
@@ -68,8 +69,6 @@ export default function Recorder({ onComplete, disabled }: Props) {
   const analyserRef = useRef<AnalyserNode | null>(null);
   const rafRef = useRef<number | null>(null);
   const smoothRef = useRef({ level: 0, low: 0, mid: 0, high: 0 });
-  const ripplesRef = useRef<{ r: number; alpha: number }[]>([]);
-  const lastRippleRef = useRef(0);
 
   const stopAudioAnalysis = useCallback(() => {
     if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
@@ -77,7 +76,6 @@ export default function Recorder({ onComplete, disabled }: Props) {
     audioCtxRef.current?.close().catch(() => {});
     audioCtxRef.current = null;
     analyserRef.current = null;
-    ripplesRef.current = [];
     smoothRef.current = { level: 0, low: 0, mid: 0, high: 0 };
   }, []);
 
@@ -141,32 +139,7 @@ export default function Recorder({ onComplete, disabled }: Props) {
       const dark = document.documentElement.classList.contains("dark");
       const core = dark ? "#ffffff" : "#4338ca";
 
-      // Soft breathing glow behind everything.
-      const glow = g.createRadialGradient(cx, cy, 20, cx, cy, rect.width / 2);
-      glow.addColorStop(0, `rgba(129, 140, 248, ${0.08 + s.level * 0.3})`);
-      glow.addColorStop(1, "rgba(129, 140, 248, 0)");
-      g.fillStyle = glow;
-      g.fillRect(0, 0, rect.width, rect.height);
-
       g.globalCompositeOperation = "lighter";
-
-      // Ripples emitted on loud peaks.
-      if (s.level > 0.28 && now - lastRippleRef.current > 320) {
-        lastRippleRef.current = now;
-        if (ripplesRef.current.length < 6) {
-          ripplesRef.current.push({ r: 72, alpha: 0.45 });
-        }
-      }
-      ripplesRef.current = ripplesRef.current.filter((rp) => rp.alpha > 0.02);
-      for (const rp of ripplesRef.current) {
-        g.beginPath();
-        g.arc(cx, cy, rp.r, 0, Math.PI * 2);
-        g.strokeStyle = `rgba(167, 139, 250, ${rp.alpha})`;
-        g.lineWidth = 1.5;
-        g.stroke();
-        rp.r += 1.2 + s.level * 2.5;
-        rp.alpha *= 0.93;
-      }
 
       // The strands themselves.
       for (const st of STRANDS) {
@@ -184,7 +157,7 @@ export default function Recorder({ onComplete, disabled }: Props) {
             Math.sin(theta * st.waves + t * 1.6 * st.speed) * (2 + energy * 5) +
             Math.sin(theta * (st.waves * 2 + 1) - t * 2.4 * st.speed) *
               (1 + energy * 3);
-          const r = st.base + s.level * 6 + wobble + w * waveGain;
+          const r = (st.base + s.level * 6 + wobble + w * waveGain) * RING_SCALE;
           const x = cx + Math.cos(theta) * r;
           const y = cy + Math.sin(theta) * r;
           if (i === 0) g.moveTo(x, y);
@@ -206,7 +179,7 @@ export default function Recorder({ onComplete, disabled }: Props) {
         g.globalAlpha = Math.min(1, 0.3 + energy * 0.8);
         g.lineWidth = st.width + energy * 2;
         g.shadowColor = "rgba(139, 92, 246, 0.8)";
-        g.shadowBlur = 10 + energy * 22;
+        g.shadowBlur = (10 + energy * 22) * RING_SCALE;
         g.stroke();
       }
       g.globalAlpha = 1;
@@ -297,24 +270,22 @@ export default function Recorder({ onComplete, disabled }: Props) {
           <canvas
             ref={canvasRef}
             aria-hidden
-            className="pointer-events-none absolute -inset-16"
-            style={{ width: "calc(100% + 8rem)", height: "calc(100% + 8rem)" }}
+            className="pointer-events-none absolute -inset-80"
+            style={{ width: "calc(100% + 40rem)", height: "calc(100% + 40rem)" }}
           />
         )}
-
-        <span
-          aria-hidden
-          className={`absolute inset-4 rounded-full blur-xl ${
-            isRecording ? "bg-red-500/20" : "bg-accent/20"
-          }`}
-        />
 
         <button
           type="button"
           onClick={isRecording ? stop : start}
           disabled={disabled}
-          style={{ transform: "scale(var(--btn-scale, 1))" }}
-          className={`relative z-10 flex h-28 w-28 items-center justify-center rounded-full text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+          style={{
+            transform: "scale(var(--btn-scale, 1))",
+            boxShadow: isRecording
+              ? "inset 0 3px 5px rgba(255,255,255,0.45), inset 0 -6px 10px rgba(80,0,10,0.55), inset 0 0 0 1px rgba(255,255,255,0.15)"
+              : "inset 0 3px 5px rgba(255,255,255,0.45), inset 0 -6px 10px rgba(30,10,90,0.55), inset 0 0 0 1px rgba(255,255,255,0.15)",
+          }}
+          className={`relative z-10 flex h-28 w-28 items-center justify-center rounded-full text-white transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
             isRecording
               ? "bg-gradient-to-br from-red-500 via-red-600 to-rose-700 hover:from-red-400 hover:via-red-500 hover:to-rose-600"
               : "bg-gradient-to-br from-indigo-500 via-indigo-600 to-violet-700 hover:from-indigo-400 hover:via-indigo-500 hover:to-violet-600"
@@ -342,12 +313,9 @@ export default function Recorder({ onComplete, disabled }: Props) {
         </button>
       </div>
 
-      <div className="font-mono text-2xl tabular-nums text-foreground/80">
+      <div className="font-display text-4xl font-bold tabular-nums tracking-tight text-foreground">
         {formatDuration(elapsed)}
       </div>
-      <p className="text-base text-muted-foreground">
-        {isRecording ? "Recording… tap to stop" : "Tap to record your pitch"}
-      </p>
 
       {error && (
         <p className="max-w-sm text-center text-sm text-red-400">{error}</p>

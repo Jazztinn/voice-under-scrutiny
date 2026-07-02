@@ -17,7 +17,7 @@ type Props = {
 export default function CommunityTopicCard({ topic: initial, deviceId }: Props) {
   const router = useRouter();
   const [topic, setTopic] = useState(initial);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   // Voting/favoriting update the UI immediately (same toggle-off math the
   // server applies) instead of waiting on the round-trip — otherwise a click
@@ -68,20 +68,10 @@ export default function CommunityTopicCard({ topic: initial, deviceId }: Props) 
         <p className="text-lg font-medium leading-snug text-foreground">
           {topic.prompt}
         </p>
-        <button
-          type="button"
-          onClick={handleFavorite}
-          aria-label={topic.favorited ? "Remove favorite" : "Add favorite"}
-          aria-pressed={topic.favorited}
-          className={`shrink-0 rounded-full p-1.5 text-lg transition hover:bg-muted ${
-            topic.favorited ? "text-amber-400" : "text-muted-foreground"
-          }`}
-        >
-          {topic.favorited ? "★" : "☆"}
-        </button>
+        <span className="shrink-0 pt-1.5 text-xs text-muted-foreground">
+          {relativeTime(topic.created_at)}
+        </span>
       </div>
-
-      <p className="mt-2 text-xs text-muted-foreground">{relativeTime(topic.created_at)}</p>
 
       <button
         type="button"
@@ -101,7 +91,13 @@ export default function CommunityTopicCard({ topic: initial, deviceId }: Props) 
         }`}
       >
         <div className="overflow-hidden">
-          <div className="rounded-2xl border border-border bg-muted/40 p-4">
+          <div
+            className="rounded-2xl border border-border bg-muted/40 p-4"
+            style={{
+              boxShadow:
+                "inset 0 2px 4px rgba(0,0,0,0.08), inset 0 1px 2px rgba(0,0,0,0.06)",
+            }}
+          >
             <span className="chip">Scenario</span>
             <p className="mt-2 text-sm leading-relaxed text-foreground/80">
               {topic.scenario}
@@ -151,6 +147,18 @@ export default function CommunityTopicCard({ topic: initial, deviceId }: Props) 
             }`}
           >
             ▼
+          </button>
+          <span className="mx-0.5 h-4 w-px bg-border" aria-hidden />
+          <button
+            type="button"
+            onClick={handleFavorite}
+            aria-label={topic.favorited ? "Remove favorite" : "Add favorite"}
+            aria-pressed={topic.favorited}
+            className={`rounded-full px-2 py-1 text-sm transition hover:bg-muted ${
+              topic.favorited ? "text-amber-400" : "text-muted-foreground"
+            }`}
+          >
+            {topic.favorited ? "★" : "☆"}
           </button>
         </div>
 
