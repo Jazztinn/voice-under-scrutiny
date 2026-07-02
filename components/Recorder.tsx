@@ -31,10 +31,10 @@ type Props = {
 // Each strand is a closed loop around the button, displaced per-vertex by the
 // live waveform + sine wobble, so loud moments visibly tangle the rings.
 const STRANDS = [
-  { band: "low" as const, base: 54, speed: 0.5, dir: 1, waves: 3, amp: 16, width: 2.6 },
-  { band: "mid" as const, base: 58, speed: 1.0, dir: -1, waves: 5, amp: 12, width: 1.8 },
-  { band: "high" as const, base: 61, speed: 1.6, dir: 1, waves: 7, amp: 9, width: 1.2 },
-  { band: "level" as const, base: 56, speed: 0.3, dir: -1, waves: 2, amp: 20, width: 2.2 },
+  { band: "low" as const, base: 74, speed: 0.5, dir: 1, waves: 3, amp: 18, width: 2.8 },
+  { band: "mid" as const, base: 79, speed: 1.0, dir: -1, waves: 5, amp: 14, width: 2.0 },
+  { band: "high" as const, base: 83, speed: 1.6, dir: 1, waves: 7, amp: 10, width: 1.3 },
+  { band: "level" as const, base: 76, speed: 0.3, dir: -1, waves: 2, amp: 22, width: 2.4 },
 ];
 
 const VERTS = 160;
@@ -154,7 +154,7 @@ export default function Recorder({ onComplete, disabled }: Props) {
       if (s.level > 0.28 && now - lastRippleRef.current > 320) {
         lastRippleRef.current = now;
         if (ripplesRef.current.length < 6) {
-          ripplesRef.current.push({ r: 52, alpha: 0.45 });
+          ripplesRef.current.push({ r: 72, alpha: 0.45 });
         }
       }
       ripplesRef.current = ripplesRef.current.filter((rp) => rp.alpha > 0.02);
@@ -291,38 +291,38 @@ export default function Recorder({ onComplete, disabled }: Props) {
   }, []);
 
   return (
-    <div className="flex flex-col items-center gap-3">
-      <div ref={wrapRef} className="relative flex h-32 w-32 items-center justify-center">
+    <div className="flex flex-col items-center gap-4">
+      <div ref={wrapRef} className="relative flex h-44 w-44 items-center justify-center">
         {isRecording && !reducedMotion && (
           <canvas
             ref={canvasRef}
             aria-hidden
-            className="pointer-events-none absolute -inset-14"
-            style={{ width: "calc(100% + 7rem)", height: "calc(100% + 7rem)" }}
+            className="pointer-events-none absolute -inset-16"
+            style={{ width: "calc(100% + 8rem)", height: "calc(100% + 8rem)" }}
           />
         )}
 
-        {!isRecording && (
-          <span
-            aria-hidden
-            className="absolute inset-3 rounded-full bg-accent/20 blur-xl"
-          />
-        )}
+        <span
+          aria-hidden
+          className={`absolute inset-4 rounded-full blur-xl ${
+            isRecording ? "bg-red-500/20" : "bg-accent/20"
+          }`}
+        />
 
         <button
           type="button"
           onClick={isRecording ? stop : start}
           disabled={disabled}
           style={{ transform: "scale(var(--btn-scale, 1))" }}
-          className={`relative z-10 flex h-20 w-20 items-center justify-center rounded-full text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+          className={`relative z-10 flex h-28 w-28 items-center justify-center rounded-full text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
             isRecording
-              ? "bg-red-600 hover:bg-red-500"
+              ? "bg-gradient-to-br from-red-500 via-red-600 to-rose-700 hover:from-red-400 hover:via-red-500 hover:to-rose-600"
               : "bg-gradient-to-br from-indigo-500 via-indigo-600 to-violet-700 hover:from-indigo-400 hover:via-indigo-500 hover:to-violet-600"
           }`}
           aria-label={isRecording ? "Stop recording" : "Start recording"}
         >
           {isRecording ? (
-            <span className="h-6 w-6 rounded-sm bg-white" />
+            <span className="h-9 w-9 rounded-lg bg-white shadow-inner" />
           ) : (
             <svg
               viewBox="0 0 24 24"
@@ -331,7 +331,7 @@ export default function Recorder({ onComplete, disabled }: Props) {
               strokeWidth="1.8"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="h-8 w-8"
+              className="h-11 w-11"
               aria-hidden
             >
               <rect x="9" y="3" width="6" height="11" rx="3" />
@@ -342,10 +342,10 @@ export default function Recorder({ onComplete, disabled }: Props) {
         </button>
       </div>
 
-      <div className="font-mono text-lg tabular-nums text-foreground/80">
+      <div className="font-mono text-2xl tabular-nums text-foreground/80">
         {formatDuration(elapsed)}
       </div>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-base text-muted-foreground">
         {isRecording ? "Recording… tap to stop" : "Tap to record your pitch"}
       </p>
 

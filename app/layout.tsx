@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Baloo_2 } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import ThemeToggle from "@/components/ThemeToggle";
 import { THEME_INIT_SCRIPT } from "@/lib/theme";
 
 const geistSans = Geist({
@@ -76,6 +77,7 @@ export default function RootLayout({
           </div>
           <Footer />
         </div>
+        <ThemeToggle className="fixed bottom-5 right-5 z-50" />
       </body>
     </html>
   );

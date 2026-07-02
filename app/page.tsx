@@ -141,69 +141,71 @@ export default function PracticePage() {
   }
 
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-8">
-      <TopicCard
-        topic={topic || "…"}
-        onNewTopic={newTopic}
-        disabled={stage === "recorded"}
-      />
+    <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
+      <div className="grid gap-6 md:grid-cols-2 md:items-start">
+        <TopicCard
+          topic={topic || "…"}
+          onNewTopic={newTopic}
+          disabled={stage === "recorded"}
+        />
 
-      {stage === "idle" && (
-        <section className="flex flex-col items-center gap-4 rounded-3xl border border-border bg-card/60 py-10 shadow-sm">
-          <Recorder onComplete={handleComplete} />
-        </section>
-      )}
+        {stage === "idle" && (
+          <section className="flex min-h-[26rem] flex-col items-center justify-center gap-4 rounded-3xl border border-border bg-card/60 px-6 py-14 shadow-sm md:min-h-[30rem]">
+            <Recorder onComplete={handleComplete} />
+          </section>
+        )}
 
-      {stage === "recorded" && recording && (
-        <section className="flex flex-col gap-5">
-          <div className="rounded-3xl border border-border bg-card p-5 shadow-sm">
-            <div className="mb-3 flex items-center justify-between">
-              <span className="chip">Listen back</span>
-              <span className="font-mono text-sm text-muted-foreground">
-                {formatDuration(recording.durationSec)}
-              </span>
+        {stage === "recorded" && recording && (
+          <section className="flex flex-col gap-5">
+            <div className="rounded-3xl border border-border bg-card p-5 shadow-sm">
+              <div className="mb-3 flex items-center justify-between">
+                <span className="chip">Listen back</span>
+                <span className="font-mono text-sm text-muted-foreground">
+                  {formatDuration(recording.durationSec)}
+                </span>
+              </div>
+              <PitchPlayer blob={recording.blob} />
             </div>
-            <PitchPlayer blob={recording.blob} />
-          </div>
 
-          <TranscriptView
-            transcript={transcript}
-            loading={transcribing}
-            error={transcribeError}
-            statusText={statusText}
-            source={source}
-          />
+            <TranscriptView
+              transcript={transcript}
+              loading={transcribing}
+              error={transcribeError}
+              statusText={statusText}
+              source={source}
+            />
 
-          <FeedbackSlot />
+            <FeedbackSlot />
 
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={transcribe}
-              disabled={transcribing}
-              className="rounded-xl bg-indigo-600 px-4 py-2 font-medium text-white transition hover:bg-indigo-500 disabled:opacity-50"
-            >
-              {transcript ? "Re-transcribe" : "Transcribe"}
-            </button>
-            <button
-              type="button"
-              onClick={save}
-              disabled={saved}
-              className="rounded-xl bg-emerald-600 px-4 py-2 font-medium text-white transition hover:bg-emerald-500 disabled:opacity-50"
-            >
-              {saved ? "Saved ✓" : "Save to log"}
-            </button>
-            <button
-              type="button"
-              onClick={nextRound}
-              className="rounded-xl border border-border px-4 py-2 font-medium text-foreground transition hover:bg-muted"
-            >
-              {saved ? "Next topic" : "Discard"}
-            </button>
-          </div>
-          {saveError && <p className="text-sm text-red-400">{saveError}</p>}
-        </section>
-      )}
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={transcribe}
+                disabled={transcribing}
+                className="rounded-full bg-indigo-600 px-6 py-3 text-base font-semibold text-white transition hover:bg-indigo-500 disabled:opacity-50"
+              >
+                {transcript ? "Re-transcribe" : "Transcribe"}
+              </button>
+              <button
+                type="button"
+                onClick={save}
+                disabled={saved}
+                className="rounded-full bg-emerald-600 px-6 py-3 text-base font-semibold text-white transition hover:bg-emerald-500 disabled:opacity-50"
+              >
+                {saved ? "Saved ✓" : "Save to log"}
+              </button>
+              <button
+                type="button"
+                onClick={nextRound}
+                className="rounded-full border border-border px-6 py-3 text-base font-semibold text-foreground transition hover:bg-muted"
+              >
+                {saved ? "Next topic" : "Discard"}
+              </button>
+            </div>
+            {saveError && <p className="text-sm text-red-400">{saveError}</p>}
+          </section>
+        )}
+      </div>
     </main>
   );
 }
