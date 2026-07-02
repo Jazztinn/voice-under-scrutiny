@@ -30,8 +30,16 @@ export default function PracticePage() {
   const [saveError, setSaveError] = useState<string | null>(null);
 
   // Pick an initial topic on mount (client-only to avoid hydration mismatch).
+  // A community topic queued via "Practice this" takes priority over a random one.
   useEffect(() => {
-    setTopic(randomTopic());
+    const queued = sessionStorage.getItem("queuedTopic");
+    if (queued) {
+      sessionStorage.removeItem("queuedTopic");
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setTopic(queued);
+    } else {
+      setTopic(randomTopic());
+    }
   }, []);
 
   function newTopic() {
@@ -141,19 +149,19 @@ export default function PracticePage() {
       />
 
       {stage === "idle" && (
-        <section className="flex flex-col items-center gap-4 rounded-2xl border border-neutral-800 bg-neutral-900/40 py-10">
+        <section className="flex flex-col items-center gap-4 rounded-2xl border border-border bg-card/60 py-10">
           <Recorder onComplete={handleComplete} />
         </section>
       )}
 
       {stage === "recorded" && recording && (
         <section className="flex flex-col gap-5">
-          <div className="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5">
+          <div className="rounded-2xl border border-border bg-card p-5">
             <div className="mb-3 flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Listen back — be your own critic
               </span>
-              <span className="font-mono text-sm text-neutral-400">
+              <span className="font-mono text-sm text-muted-foreground">
                 {formatDuration(recording.durationSec)}
               </span>
             </div>
@@ -190,7 +198,7 @@ export default function PracticePage() {
             <button
               type="button"
               onClick={nextRound}
-              className="rounded-xl border border-neutral-700 px-4 py-2 font-medium text-neutral-200 transition hover:bg-neutral-800"
+              className="rounded-xl border border-border px-4 py-2 font-medium text-foreground transition hover:bg-muted"
             >
               {saved ? "Next topic" : "Discard"}
             </button>
