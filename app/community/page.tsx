@@ -25,7 +25,9 @@ export default function CommunityPage() {
     setTopics(null);
     fetchCommunityTopics(sort, deviceId)
       .then(setTopics)
-      .catch(() => setError("Could not load community topics."));
+      .catch((err) =>
+        setError(err instanceof Error ? err.message : "Could not load community topics.")
+      );
   }, [sort, deviceId]);
 
   return (
@@ -99,7 +101,6 @@ export default function CommunityPage() {
                 prompt: topic.prompt,
                 scenario: topic.scenario,
                 cases: topic.cases,
-                author_username: topic.author_username,
                 created_at: topic.created_at,
                 upvotes: 0,
                 downvotes: 0,

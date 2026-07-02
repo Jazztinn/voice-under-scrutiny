@@ -8,7 +8,17 @@ export async function GET(req: Request) {
   const sort = searchParams.get("sort") === "new" ? "new" : "top";
   const deviceId = searchParams.get("deviceId");
 
-  const supabase = getSupabase();
+  let supabase;
+  try {
+    supabase = getSupabase();
+  } catch (err) {
+    console.error("Supabase not configured:", err);
+    return NextResponse.json(
+      { error: "Server missing Supabase configuration." },
+      { status: 500 }
+    );
+  }
+
   let query = supabase.from("community_topics_with_stats").select("*");
   query =
     sort === "new"
@@ -51,10 +61,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid JSON." }, { status: 400 });
   }
 
-  const { prompt, scenario, cases, username, deviceId } = (body ?? {}) as Record<
-    string,
-    unknown
-  >;
+  const { prompt, scenario, cases, deviceId } = (body ?? {}) as Record<string, unknown>;
 
   if (typeof prompt !== "string" || !prompt.trim()) {
     return NextResponse.json({ error: "Prompt is required." }, { status: 400 });
@@ -68,9 +75,6 @@ export async function POST(req: Request) {
       { status: 400 }
     );
   }
-  if (typeof username !== "string" || !username.trim()) {
-    return NextResponse.json({ error: "Username is required." }, { status: 400 });
-  }
   if (typeof deviceId !== "string" || !deviceId.trim()) {
     return NextResponse.json({ error: "Missing device id." }, { status: 400 });
   }
@@ -80,14 +84,24 @@ export async function POST(req: Request) {
     .filter(Boolean)
     .slice(0, 10);
 
-  const supabase = getSupabase();
+  let supabase;
+  try {
+    supabase = getSupabase();
+  } catch (err) {
+    console.error("Supabase not configured:", err);
+    return NextResponse.json(
+      { error: "Server missing Supabase configuration." },
+      { status: 500 }
+    );
+  }
+
   const { data, error } = await supabase
     .from("community_topics")
     .insert({
       prompt: prompt.trim().slice(0, 500),
       scenario: scenario.trim().slice(0, 1000),
       cases: cleanCases,
-      author_username: username.trim().slice(0, 40),
+      author_username: "Anonymous",
       device_id: deviceId,
     })
     .select()

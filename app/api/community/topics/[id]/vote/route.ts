@@ -24,7 +24,16 @@ export async function POST(
     return NextResponse.json({ error: "Value must be 1 or -1." }, { status: 400 });
   }
 
-  const supabase = getSupabase();
+  let supabase;
+  try {
+    supabase = getSupabase();
+  } catch (err) {
+    console.error("Supabase not configured:", err);
+    return NextResponse.json(
+      { error: "Server missing Supabase configuration." },
+      { status: 500 }
+    );
+  }
 
   const { data: existing } = await supabase
     .from("topic_votes")

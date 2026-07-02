@@ -8,8 +8,6 @@ import {
   voteOnTopic,
   type CommunityTopic,
 } from "@/lib/community";
-import { useEnsureUsername } from "@/components/UsernamePrompt";
-import UsernamePrompt from "@/components/UsernamePrompt";
 
 type Props = {
   topic: CommunityTopic;
@@ -21,12 +19,10 @@ export default function CommunityTopicCard({ topic: initial, deviceId }: Props) 
   const [topic, setTopic] = useState(initial);
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
-  const { ensureUsername, promptProps } = useEnsureUsername();
 
   async function handleVote(value: 1 | -1) {
     if (busy) return;
     setBusy(true);
-    await ensureUsername();
     const prevVote = topic.myVote;
     try {
       const { myVote } = await voteOnTopic(topic.id, deviceId, value);
@@ -49,7 +45,6 @@ export default function CommunityTopicCard({ topic: initial, deviceId }: Props) 
   async function handleFavorite() {
     if (busy) return;
     setBusy(true);
-    await ensureUsername();
     try {
       const { favorited } = await toggleFavorite(topic.id, deviceId);
       setTopic((t) => ({
@@ -88,10 +83,7 @@ export default function CommunityTopicCard({ topic: initial, deviceId }: Props) 
         </button>
       </div>
 
-      <p className="mt-2 text-xs text-muted-foreground">
-        by <span className="font-medium text-foreground/80">{topic.author_username}</span>{" "}
-        · {relativeTime(topic.created_at)}
-      </p>
+      <p className="mt-2 text-xs text-muted-foreground">{relativeTime(topic.created_at)}</p>
 
       <button
         type="button"
@@ -174,8 +166,6 @@ export default function CommunityTopicCard({ topic: initial, deviceId }: Props) 
           Practice this
         </button>
       </div>
-
-      <UsernamePrompt {...promptProps} />
     </div>
   );
 }

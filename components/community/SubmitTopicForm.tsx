@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { submitCommunityTopic, type NewCommunityTopic } from "@/lib/community";
-import UsernamePrompt, { useEnsureUsername } from "@/components/UsernamePrompt";
 
 type Props = {
   open: boolean;
@@ -17,7 +16,6 @@ export default function SubmitTopicForm({ open, deviceId, onClose, onSubmitted }
   const [cases, setCases] = useState<string[]>([""]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { ensureUsername, promptProps } = useEnsureUsername();
 
   if (!open) return null;
 
@@ -48,12 +46,10 @@ export default function SubmitTopicForm({ open, deviceId, onClose, onSubmitted }
     setSubmitting(true);
     setError(null);
     try {
-      const username = await ensureUsername();
       const topic = await submitCommunityTopic({
         prompt: prompt.trim(),
         scenario: scenario.trim(),
         cases: cases.map((c) => c.trim()).filter(Boolean),
-        username,
         deviceId,
       });
       onSubmitted(topic);
@@ -156,8 +152,6 @@ export default function SubmitTopicForm({ open, deviceId, onClose, onSubmitted }
           </button>
         </div>
       </div>
-
-      <UsernamePrompt {...promptProps} />
     </div>
   );
 }

@@ -3,7 +3,6 @@ export type CommunityTopic = {
   prompt: string;
   scenario: string;
   cases: string[];
-  author_username: string;
   created_at: string;
   upvotes: number;
   downvotes: number;
@@ -15,7 +14,7 @@ export type CommunityTopic = {
 
 export type NewCommunityTopic = Pick<
   CommunityTopic,
-  "id" | "prompt" | "scenario" | "cases" | "author_username" | "created_at"
+  "id" | "prompt" | "scenario" | "cases" | "created_at"
 >;
 
 export type SortMode = "top" | "new";
@@ -26,16 +25,15 @@ export async function fetchCommunityTopics(
 ): Promise<CommunityTopic[]> {
   const params = new URLSearchParams({ sort, deviceId });
   const res = await fetch(`/api/community/topics?${params}`);
-  if (!res.ok) throw new Error("Failed to load community topics.");
-  const data = await res.json();
-  return data.topics ?? [];
+  const data = await res.json().catch(() => null);
+  if (!res.ok) throw new Error(data?.error ?? "Failed to load community topics.");
+  return data?.topics ?? [];
 }
 
 export async function submitCommunityTopic(input: {
   prompt: string;
   scenario: string;
   cases: string[];
-  username: string;
   deviceId: string;
 }): Promise<NewCommunityTopic> {
   const res = await fetch("/api/community/topics", {
