@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Baloo_2 } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
-import Footer from "@/components/Footer";
+import PageFrame from "@/components/PageFrame";
 import ThemeToggle from "@/components/ThemeToggle";
 import { THEME_INIT_SCRIPT } from "@/lib/theme";
 
@@ -69,14 +69,10 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-frame p-2 sm:p-3">
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
-        <div className="flex flex-col overflow-hidden rounded-[1.75rem] bg-background text-foreground">
-          {/* Nav + page fill at least one full viewport, keeping the footer below the fold. */}
-          <div className="flex min-h-svh flex-col">
-            <Nav />
-            {children}
-          </div>
-          <Footer />
-        </div>
+        <PageFrame>
+          <Nav />
+          {children}
+        </PageFrame>
         <ThemeToggle className="fixed bottom-5 right-5 z-50" />
       </body>
     </html>
