@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const LINKS = [
   { href: "/", label: "Practice" },
@@ -12,12 +13,14 @@ const LINKS = [
 export default function Nav() {
   const pathname = usePathname();
   return (
-    <header className="border-b border-border">
-      <nav className="mx-auto flex max-w-2xl items-center justify-between px-4 py-3 pl-16">
-        <Link href="/" className="flex items-center gap-2 font-display font-bold text-foreground">
-          <span aria-hidden>🎤</span>
-          <span>Voice Under Scrutiny</span>
-        </Link>
+    <header>
+      <nav className="mx-auto flex max-w-2xl items-center justify-between px-4 py-3">
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          <Link href="/" className="font-display font-bold text-foreground">
+            Voice Under Scrutiny
+          </Link>
+        </div>
         <div className="flex gap-1">
           {LINKS.map((l) => {
             const active = pathname === l.href;
