@@ -2,9 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { TOPICS, topicDetail } from "@/lib/topics";
+import type { Topic } from "@/lib/topics";
 
 type Props = {
   topic: string;
+  detail?: Topic | null;
   onNewTopic: () => void;
   disabled?: boolean;
 };
@@ -13,7 +15,7 @@ type Props = {
 const ROLL_MS = 650;
 const FLIP_MS = 55;
 
-export default function TopicCard({ topic, onNewTopic, disabled }: Props) {
+export default function TopicCard({ topic, detail: detailOverride, onNewTopic, disabled }: Props) {
   // `display` is what the card shows: real topic when idle, random flashes while rolling.
   const [display, setDisplay] = useState(topic);
   const [rolling, setRolling] = useState(false);
@@ -21,7 +23,7 @@ export default function TopicCard({ topic, onNewTopic, disabled }: Props) {
   const rollTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const stopTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const detail = topicDetail(topic);
+  const detail = detailOverride ?? topicDetail(topic);
 
   // Settle on the real topic once the parent hands us a new one and the roll ends.
   useEffect(() => {

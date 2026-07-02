@@ -1,16 +1,18 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { formatDuration } from "@/lib/format";
 
 type Props = {
   blob: Blob;
+  durationSec?: number;
   className?: string;
 };
 
 type PlayerControlsProps = {
   url: string;
+  durationHint?: number;
   className?: string;
 };
 
@@ -72,14 +74,28 @@ function VolumeIcon({ muted }: { muted: boolean }) {
 /**
  * Owns the object URL lifecycle for the recorded audio blob.
  */
-export default function PitchPlayer({ blob, className }: Props) {
-  const url = useMemo(() => URL.createObjectURL(blob), [blob]);
+export default function PitchPlayer({ blob, durationSec, className }: Props) {
+  const [url, setUrl] = useState("");
 
   useEffect(() => {
-    return () => URL.revokeObjectURL(url);
-  }, [url]);
+    const nextUrl = URL.createObjectURL(blob);
+    // This state mirrors an external object URL resource. Creating it in an
+    // effect keeps Strict Mode cleanup from revoking a render-time URL.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setUrl(nextUrl);
+    return () => URL.revokeObjectURL(nextUrl);
+  }, [blob]);
 
-  return <PlayerControls key={url} url={url} className={className} />;
+  if (!url) return null;
+
+  return (
+    <PlayerControls
+      key={url}
+      url={url}
+      durationHint={durationSec}
+      className={className}
+    />
+  );
 }
 
 /**
@@ -87,7 +103,7 @@ export default function PitchPlayer({ blob, className }: Props) {
  * The native browser control bar is intentionally replaced so playback matches
  * the app's purple visual system across browsers.
  */
-function PlayerControls({ url, className }: PlayerControlsProps) {
+function PlayerControls({ url, durationHint, className }: PlayerControlsProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
@@ -108,7 +124,8 @@ function PlayerControls({ url, className }: PlayerControlsProps) {
   function skip(seconds: number) {
     const audio = audioRef.current;
     if (!audio) return;
-    audio.currentTime = Math.min(Math.max(audio.currentTime + seconds, 0), duration || 0);
+    const maxTime = duration || durationHint || audio.duration || 0;
+    audio.currentTime = Math.min(Math.max(audio.currentTime + seconds, 0), maxTime);
   }
 
   function seek(value: string) {
@@ -126,7 +143,8 @@ function PlayerControls({ url, className }: PlayerControlsProps) {
     setMuted(audio.muted);
   }
 
-  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+  const displayDuration = duration || durationHint || 0;
+  const progress = displayDuration > 0 ? (currentTime / displayDuration) * 100 : 0;
 
   return (
     <div
@@ -136,7 +154,14 @@ function PlayerControls({ url, className }: PlayerControlsProps) {
         ref={audioRef}
         src={url}
         preload="metadata"
-        onLoadedMetadata={(e) => setDuration(e.currentTarget.duration || 0)}
+        onLoadedMetadata={(e) => {
+          const nextDuration = e.currentTarget.duration;
+          setDuration(Number.isFinite(nextDuration) ? nextDuration : 0);
+        }}
+        onDurationChange={(e) => {
+          const nextDuration = e.currentTarget.duration;
+          setDuration(Number.isFinite(nextDuration) ? nextDuration : 0);
+        }}
         onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
         onPlay={() => setPaused(false)}
         onPause={() => setPaused(true)}
@@ -179,9 +204,9 @@ function PlayerControls({ url, className }: PlayerControlsProps) {
       <input
         type="range"
         min={0}
-        max={Math.max(duration, 0)}
+        max={Math.max(displayDuration, 0)}
         step="0.01"
-        value={Math.min(currentTime, duration || 0)}
+        value={Math.min(currentTime, displayDuration || 0)}
         onChange={(e) => seek(e.target.value)}
         className="vus-player-range min-w-0 flex-1"
         style={{ "--range-progress": `${progress}%` } as CSSProperties}
@@ -189,7 +214,7 @@ function PlayerControls({ url, className }: PlayerControlsProps) {
       />
 
       <span className="w-12 shrink-0 font-mono text-sm font-bold tabular-nums">
-        {formatDuration(duration)}
+        {formatDuration(displayDuration)}
       </span>
 
       <button

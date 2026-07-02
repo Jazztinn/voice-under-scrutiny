@@ -6,7 +6,7 @@ import PitchPlayer from "@/components/PitchPlayer";
 import TopicCard from "@/components/TopicCard";
 import TranscriptView from "@/components/TranscriptView";
 import FeedbackSlot from "@/components/FeedbackSlot";
-import { randomTopic } from "@/lib/topics";
+import { randomTopic, type Topic } from "@/lib/topics";
 import { addPitch, type Pitch } from "@/lib/db";
 import { formatDuration } from "@/lib/format";
 import { transcribeLocally } from "@/lib/localTranscribe";
@@ -15,8 +15,33 @@ type Source = "groq" | "in-browser" | null;
 
 type Stage = "idle" | "recorded";
 
+type QueuedTopic = Topic;
+
+function parseQueuedTopic(raw: string): QueuedTopic {
+  try {
+    const parsed = JSON.parse(raw) as Partial<Topic>;
+    if (
+      typeof parsed.prompt === "string" &&
+      typeof parsed.scenario === "string" &&
+      Array.isArray(parsed.cases) &&
+      parsed.cases.every((item) => typeof item === "string")
+    ) {
+      return {
+        prompt: parsed.prompt,
+        scenario: parsed.scenario,
+        cases: parsed.cases,
+      };
+    }
+  } catch {
+    // Older queued topics were stored as the prompt string only.
+  }
+
+  return { prompt: raw, scenario: "", cases: [] };
+}
+
 export default function PracticePage() {
   const [topic, setTopic] = useState("");
+  const [topicDetail, setTopicDetail] = useState<Topic | null>(null);
   const [stage, setStage] = useState<Stage>("idle");
   const [recording, setRecording] = useState<Recording | null>(null);
 
@@ -35,14 +60,17 @@ export default function PracticePage() {
     const queued = sessionStorage.getItem("queuedTopic");
     if (queued) {
       sessionStorage.removeItem("queuedTopic");
+      const parsed = parseQueuedTopic(queued);
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setTopic(queued);
+      setTopic(parsed.prompt);
+      setTopicDetail(parsed.scenario ? parsed : null);
     } else {
       setTopic(randomTopic());
     }
   }, []);
 
   function newTopic() {
+    setTopicDetail(null);
     setTopic((prev) => randomTopic(prev));
   }
 
@@ -145,6 +173,7 @@ export default function PracticePage() {
       <div className="grid flex-1 gap-6 md:grid-cols-2 md:items-stretch">
         <TopicCard
           topic={topic || "…"}
+          detail={topicDetail}
           onNewTopic={newTopic}
           disabled={stage === "recorded"}
         />
@@ -164,7 +193,7 @@ export default function PracticePage() {
                   {formatDuration(recording.durationSec)}
                 </span>
               </div>
-              <PitchPlayer blob={recording.blob} />
+              <PitchPlayer blob={recording.blob} durationSec={recording.durationSec} />
             </div>
 
             <TranscriptView

@@ -76,7 +76,7 @@ export default function HistoryPage() {
 
               {open && (
                 <div className="flex flex-col gap-4 border-t border-border p-4">
-                  <PitchPlayer blob={p.audioBlob} />
+                  <PitchPlayer blob={p.audioBlob} durationSec={p.durationSec} />
                   <div>
                     <p className="mb-2">
                       <span className="chip">Transcript</span>

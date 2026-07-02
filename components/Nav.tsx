@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -14,8 +15,18 @@ export default function Nav() {
   return (
     <header>
       <nav className="relative flex w-full items-center justify-between px-6 py-4">
-        <Link href="/" className="font-brand text-3xl text-accent">
-          Voice Under Scrutiny
+        <Link href="/" className="flex items-center gap-3 text-accent">
+          <span className="btn-emboss grid h-11 w-11 place-items-center rounded-xl bg-accent">
+            <Image
+              src="/logo-white.png"
+              width={34}
+              height={34}
+              alt=""
+              priority
+              className="h-8 w-8 object-contain"
+            />
+          </span>
+          <span className="font-brand text-3xl">Voice Under Scrutiny</span>
         </Link>
         <div className="flex gap-2">
           {LINKS.map((l) => {

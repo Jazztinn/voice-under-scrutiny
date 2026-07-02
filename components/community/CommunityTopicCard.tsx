@@ -58,7 +58,14 @@ export default function CommunityTopicCard({ topic: initial, deviceId }: Props) 
   }
 
   function practiceThis() {
-    sessionStorage.setItem("queuedTopic", topic.prompt);
+    sessionStorage.setItem(
+      "queuedTopic",
+      JSON.stringify({
+        prompt: topic.prompt,
+        scenario: topic.scenario,
+        cases: topic.cases,
+      })
+    );
     router.push("/");
   }
 
