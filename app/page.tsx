@@ -17,6 +17,38 @@ type Stage = "idle" | "recorded";
 
 type QueuedTopic = Topic;
 
+function PracticeSkeleton() {
+  return (
+    <main className="flex w-full flex-1 flex-col px-6 py-8">
+      <div className="grid flex-1 gap-6 md:grid-cols-2 md:items-stretch">
+        <section className="h-full w-full overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-sm">
+          <div className="flex items-center justify-between">
+            <div className="skeleton-shimmer h-8 w-32 rounded-full" />
+            <div className="skeleton-shimmer h-5 w-24 rounded-full" />
+          </div>
+          <div className="mt-8 space-y-4">
+            <div className="skeleton-shimmer h-9 w-11/12 rounded-full" />
+            <div className="skeleton-shimmer h-9 w-8/12 rounded-full" />
+          </div>
+          <div className="mt-10 rounded-2xl border border-border bg-muted/40 p-4">
+            <div className="skeleton-shimmer h-6 w-24 rounded-full" />
+            <div className="mt-3 space-y-2">
+              <div className="skeleton-shimmer h-3.5 w-full rounded-full" />
+              <div className="skeleton-shimmer h-3.5 w-10/12 rounded-full" />
+              <div className="skeleton-shimmer h-3.5 w-7/12 rounded-full" />
+            </div>
+          </div>
+        </section>
+
+        <section className="flex min-h-[26rem] flex-col items-center justify-center gap-5 rounded-3xl border border-border bg-card/60 px-6 py-14 shadow-sm md:min-h-[30rem]">
+          <div className="skeleton-shimmer h-32 w-32 rounded-full" />
+          <div className="skeleton-shimmer h-10 w-24 rounded-full" />
+        </section>
+      </div>
+    </main>
+  );
+}
+
 function parseQueuedTopic(raw: string): QueuedTopic {
   try {
     const parsed = JSON.parse(raw) as Partial<Topic>;
@@ -166,6 +198,10 @@ export default function PracticePage() {
   function nextRound() {
     newTopic();
     reset();
+  }
+
+  if (!topic) {
+    return <PracticeSkeleton />;
   }
 
   return (

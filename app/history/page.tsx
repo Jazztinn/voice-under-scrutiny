@@ -6,6 +6,24 @@ import PitchPlayer from "@/components/PitchPlayer";
 import { getAllPitches, deletePitch, type Pitch } from "@/lib/db";
 import { formatDate, formatDuration, wordCount } from "@/lib/format";
 
+function PitchLogSkeleton() {
+  return (
+    <li className="rounded-3xl border border-border bg-card p-4 shadow-sm">
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0 flex-1">
+          <div className="skeleton-shimmer h-5 w-10/12 rounded-full" />
+          <div className="mt-2 flex gap-2">
+            <div className="skeleton-shimmer h-3 w-24 rounded-full" />
+            <div className="skeleton-shimmer h-3 w-14 rounded-full" />
+            <div className="skeleton-shimmer h-3 w-18 rounded-full" />
+          </div>
+        </div>
+        <div className="skeleton-shimmer h-5 w-5 shrink-0 rounded-full" />
+      </div>
+    </li>
+  );
+}
+
 export default function HistoryPage() {
   const [pitches, setPitches] = useState<Pitch[] | null>(null);
   const [openId, setOpenId] = useState<string | null>(null);
@@ -33,7 +51,13 @@ export default function HistoryPage() {
         )}
       </div>
 
-      {pitches === null && <p className="text-muted-foreground">Loading…</p>}
+      {pitches === null && (
+        <ul className="flex flex-col gap-3" aria-label="Loading pitch log" aria-busy="true">
+          {Array.from({ length: 4 }, (_, i) => (
+            <PitchLogSkeleton key={i} />
+          ))}
+        </ul>
+      )}
 
       {pitches && pitches.length === 0 && (
         <div className="rounded-3xl border border-dashed border-border p-10 text-center">
