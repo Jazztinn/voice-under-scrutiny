@@ -45,7 +45,7 @@ export default function CommunityPage() {
           type="button"
           onClick={() => setFormOpen(true)}
           disabled={!deviceId}
-          className="mt-5 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition hover:bg-accent-hover disabled:opacity-50"
+          className="mt-5 rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-black/80 disabled:opacity-50"
         >
           Submit a topic
         </button>

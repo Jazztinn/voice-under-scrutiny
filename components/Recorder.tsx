@@ -283,12 +283,12 @@ export default function Recorder({ onComplete, disabled }: Props) {
             transform: "scale(var(--btn-scale, 1))",
             boxShadow: isRecording
               ? "inset 0 3px 5px rgba(255,255,255,0.45), inset 0 -6px 10px rgba(80,0,10,0.55), inset 0 0 0 1px rgba(255,255,255,0.15)"
-              : "inset 0 3px 5px rgba(255,255,255,0.45), inset 0 -6px 10px rgba(30,10,90,0.55), inset 0 0 0 1px rgba(255,255,255,0.15)",
+              : "inset 0 3px 5px rgba(255,255,255,0.45), inset 0 -6px 10px rgba(10,20,90,0.55), inset 0 0 0 1px rgba(255,255,255,0.15)",
           }}
           className={`relative z-10 flex h-28 w-28 items-center justify-center rounded-full text-white transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
             isRecording
               ? "bg-gradient-to-br from-red-500 via-red-600 to-rose-700 hover:from-red-400 hover:via-red-500 hover:to-rose-600"
-              : "bg-gradient-to-br from-indigo-500 via-indigo-600 to-violet-700 hover:from-indigo-400 hover:via-indigo-500 hover:to-violet-600"
+              : "bg-gradient-to-br from-indigo-500 via-indigo-600 to-indigo-700 hover:from-indigo-400 hover:via-indigo-500 hover:to-indigo-600"
           }`}
           aria-label={isRecording ? "Stop recording" : "Start recording"}
         >

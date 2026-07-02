@@ -17,26 +17,6 @@ export default function Nav() {
         <Link href="/" className="font-brand text-3xl text-accent">
           Voice Under Scrutiny
         </Link>
-        <Link
-          href="/"
-          aria-label="Voice Under Scrutiny home"
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-        >
-          <span
-            aria-hidden
-            className="block h-10 w-10 bg-accent"
-            style={{
-              WebkitMaskImage: "url(/logo.png)",
-              maskImage: "url(/logo.png)",
-              WebkitMaskSize: "contain",
-              maskSize: "contain",
-              WebkitMaskRepeat: "no-repeat",
-              maskRepeat: "no-repeat",
-              WebkitMaskPosition: "center",
-              maskPosition: "center",
-            }}
-          />
-        </Link>
         <div className="flex gap-2">
           {LINKS.map((l) => {
             const active = pathname === l.href;
