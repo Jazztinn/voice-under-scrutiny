@@ -1,12 +1,22 @@
 import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase";
+import { isUuid } from "@/lib/validate";
+import { countRecent } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
+
+// Per-device: 5 topics / 10 min. Global brake: 30 topics / min across all
+// devices, so rotating device IDs can't flood the board unbounded.
+const TOPIC_DEVICE_MAX = 5;
+const TOPIC_DEVICE_WINDOW_SEC = 600;
+const TOPIC_GLOBAL_MAX = 30;
+const TOPIC_GLOBAL_WINDOW_SEC = 60;
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const sort = searchParams.get("sort") === "new" ? "new" : "top";
-  const deviceId = searchParams.get("deviceId");
+  const rawDeviceId = searchParams.get("deviceId");
+  const deviceId = isUuid(rawDeviceId) ? rawDeviceId : null;
 
   let supabase;
   try {
@@ -75,12 +85,12 @@ export async function POST(req: Request) {
       { status: 400 }
     );
   }
-  if (typeof deviceId !== "string" || !deviceId.trim()) {
-    return NextResponse.json({ error: "Missing device id." }, { status: 400 });
+  if (!isUuid(deviceId)) {
+    return NextResponse.json({ error: "Invalid device id." }, { status: 400 });
   }
 
   const cleanCases = (cases as string[])
-    .map((c) => c.trim())
+    .map((c) => c.trim().slice(0, 200))
     .filter(Boolean)
     .slice(0, 10);
 
@@ -92,6 +102,23 @@ export async function POST(req: Request) {
     return NextResponse.json(
       { error: "Server missing Supabase configuration." },
       { status: 500 }
+    );
+  }
+
+  const [byDevice, global] = await Promise.all([
+    countRecent(supabase, "community_topics", "device_id", deviceId, TOPIC_DEVICE_WINDOW_SEC),
+    countRecent(supabase, "community_topics", null, null, TOPIC_GLOBAL_WINDOW_SEC),
+  ]);
+  if (byDevice >= TOPIC_DEVICE_MAX) {
+    return NextResponse.json(
+      { error: "You're submitting topics too quickly — try again in a few minutes." },
+      { status: 429 }
+    );
+  }
+  if (global >= TOPIC_GLOBAL_MAX) {
+    return NextResponse.json(
+      { error: "The community is busy right now — try again shortly." },
+      { status: 429 }
     );
   }
 

@@ -1,13 +1,21 @@
 import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase";
+import { isUuid } from "@/lib/validate";
+import { countRecent } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
+
+const FAVORITE_DEVICE_MAX = 30;
+const FAVORITE_DEVICE_WINDOW_SEC = 60;
 
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  if (!isUuid(id)) {
+    return NextResponse.json({ error: "Invalid topic id." }, { status: 400 });
+  }
 
   let body: unknown;
   try {
@@ -17,8 +25,8 @@ export async function POST(
   }
   const { deviceId } = (body ?? {}) as Record<string, unknown>;
 
-  if (typeof deviceId !== "string" || !deviceId.trim()) {
-    return NextResponse.json({ error: "Missing device id." }, { status: 400 });
+  if (!isUuid(deviceId)) {
+    return NextResponse.json({ error: "Invalid device id." }, { status: 400 });
   }
 
   let supabase;
@@ -29,6 +37,20 @@ export async function POST(
     return NextResponse.json(
       { error: "Server missing Supabase configuration." },
       { status: 500 }
+    );
+  }
+
+  const recent = await countRecent(
+    supabase,
+    "topic_favorites",
+    "device_id",
+    deviceId,
+    FAVORITE_DEVICE_WINDOW_SEC
+  );
+  if (recent >= FAVORITE_DEVICE_MAX) {
+    return NextResponse.json(
+      { error: "Too many favorites at once — slow down a little." },
+      { status: 429 }
     );
   }
 

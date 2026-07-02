@@ -1,13 +1,21 @@
 import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase";
+import { isUuid } from "@/lib/validate";
+import { countRecent } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
+
+const VOTE_DEVICE_MAX = 30;
+const VOTE_DEVICE_WINDOW_SEC = 60;
 
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  if (!isUuid(id)) {
+    return NextResponse.json({ error: "Invalid topic id." }, { status: 400 });
+  }
 
   let body: unknown;
   try {
@@ -17,8 +25,8 @@ export async function POST(
   }
   const { deviceId, value } = (body ?? {}) as Record<string, unknown>;
 
-  if (typeof deviceId !== "string" || !deviceId.trim()) {
-    return NextResponse.json({ error: "Missing device id." }, { status: 400 });
+  if (!isUuid(deviceId)) {
+    return NextResponse.json({ error: "Invalid device id." }, { status: 400 });
   }
   if (value !== 1 && value !== -1) {
     return NextResponse.json({ error: "Value must be 1 or -1." }, { status: 400 });
@@ -32,6 +40,20 @@ export async function POST(
     return NextResponse.json(
       { error: "Server missing Supabase configuration." },
       { status: 500 }
+    );
+  }
+
+  const recent = await countRecent(
+    supabase,
+    "topic_votes",
+    "device_id",
+    deviceId,
+    VOTE_DEVICE_WINDOW_SEC
+  );
+  if (recent >= VOTE_DEVICE_MAX) {
+    return NextResponse.json(
+      { error: "Too many votes at once — slow down a little." },
+      { status: 429 }
     );
   }
 
