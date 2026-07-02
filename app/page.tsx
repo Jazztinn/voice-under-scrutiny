@@ -142,23 +142,6 @@ export default function PracticePage() {
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-8">
-      {stage === "idle" && (
-        <header className="flex flex-col gap-3">
-          <h1 className="font-display text-4xl font-extrabold leading-tight tracking-tight text-foreground sm:text-5xl">
-            Practice out loud.
-          </h1>
-          <p className="text-muted-foreground">
-            Be your own toughest audience — one pitch at a time.
-          </p>
-          <div className="flex flex-wrap gap-2">
-            <span className="chip">1 · topic</span>
-            <span className="chip">2 · record</span>
-            <span className="chip">3 · listen</span>
-            <span className="chip">4 · transcribe</span>
-          </div>
-        </header>
-      )}
-
       <TopicCard
         topic={topic || "…"}
         onNewTopic={newTopic}

@@ -302,6 +302,13 @@ export default function Recorder({ onComplete, disabled }: Props) {
           />
         )}
 
+        {!isRecording && (
+          <span
+            aria-hidden
+            className="absolute inset-3 rounded-full bg-accent/20 blur-xl"
+          />
+        )}
+
         <button
           type="button"
           onClick={isRecording ? stop : start}
@@ -310,14 +317,27 @@ export default function Recorder({ onComplete, disabled }: Props) {
           className={`relative z-10 flex h-20 w-20 items-center justify-center rounded-full text-white shadow-lg transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
             isRecording
               ? "bg-red-600 hover:bg-red-500"
-              : "bg-indigo-600 hover:bg-indigo-500"
+              : "bg-gradient-to-br from-indigo-500 via-indigo-600 to-violet-700 hover:from-indigo-400 hover:via-indigo-500 hover:to-violet-600"
           }`}
           aria-label={isRecording ? "Stop recording" : "Start recording"}
         >
           {isRecording ? (
             <span className="h-6 w-6 rounded-sm bg-white" />
           ) : (
-            <span className="h-7 w-7 rounded-full bg-white" />
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-8 w-8"
+              aria-hidden
+            >
+              <rect x="9" y="3" width="6" height="11" rx="3" />
+              <path d="M5 11a7 7 0 0 0 14 0" />
+              <path d="M12 18v3" />
+            </svg>
           )}
         </button>
       </div>

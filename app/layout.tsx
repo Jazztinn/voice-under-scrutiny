@@ -68,9 +68,12 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-frame p-2 sm:p-3">
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
-        <div className="flex min-h-[calc(100vh-1rem)] flex-col overflow-hidden rounded-[1.75rem] bg-background text-foreground sm:min-h-[calc(100vh-1.5rem)]">
-          <Nav />
-          {children}
+        <div className="flex flex-col overflow-hidden rounded-[1.75rem] bg-background text-foreground">
+          {/* Nav + page fill at least one full viewport, keeping the footer below the fold. */}
+          <div className="flex min-h-svh flex-col">
+            <Nav />
+            {children}
+          </div>
           <Footer />
         </div>
       </body>
