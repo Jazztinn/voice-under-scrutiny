@@ -20,7 +20,11 @@ function MoonIcon() {
   );
 }
 
-export default function ThemeToggle() {
+type Props = {
+  className?: string;
+};
+
+export default function ThemeToggle({ className }: Props) {
   // Default to dark so the server-rendered markup matches the app's
   // dark-first look before the theme class (set by a blocking inline
   // script in layout.tsx) is read on mount.
@@ -45,7 +49,7 @@ export default function ThemeToggle() {
       type="button"
       onClick={toggle}
       aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-card text-foreground transition hover:bg-muted"
+      className={`flex shrink-0 items-center justify-center text-foreground transition hover:opacity-70 ${className ?? ""}`}
     >
       {mounted && theme === "light" ? <MoonIcon /> : <SunIcon />}
     </button>

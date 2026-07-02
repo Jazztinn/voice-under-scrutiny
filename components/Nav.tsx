@@ -13,14 +13,12 @@ const LINKS = [
 export default function Nav() {
   const pathname = usePathname();
   return (
-    <header>
+    <header className="relative">
+      <ThemeToggle className="absolute left-4 top-1/2 -translate-y-1/2" />
       <nav className="mx-auto flex max-w-2xl items-center justify-between px-4 py-3">
-        <div className="flex items-center gap-3">
-          <ThemeToggle />
-          <Link href="/" className="font-display font-bold text-foreground">
-            Voice Under Scrutiny
-          </Link>
-        </div>
+        <Link href="/" className="font-display font-bold text-foreground">
+          Voice Under Scrutiny
+        </Link>
         <div className="flex gap-1">
           {LINKS.map((l) => {
             const active = pathname === l.href;
