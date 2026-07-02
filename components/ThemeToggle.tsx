@@ -49,7 +49,7 @@ export default function ThemeToggle({ className }: Props) {
       type="button"
       onClick={toggle}
       aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-      className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-lg shadow-black/15 transition hover:bg-accent-hover ${className ?? ""}`}
+      className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-lg shadow-black/15 transition hover:bg-accent-hover sm:h-14 sm:w-14 ${className ?? ""}`}
     >
       {mounted && theme === "light" ? <MoonIcon /> : <SunIcon />}
     </button>

@@ -91,14 +91,14 @@ export default function TopicCard({
   }
 
   return (
-    <div className="h-full w-full overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-sm">
-      <div className="flex items-center justify-between">
+    <div className="h-full w-full overflow-hidden rounded-2xl border border-border bg-card p-4 shadow-sm sm:rounded-3xl sm:p-6">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="chip">Your topic</span>
         <button
           type="button"
           onClick={handleNewTopic}
           disabled={disabled || rolling || generating}
-          className="rounded-lg px-2 py-1 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
+          className="min-h-10 rounded-lg px-2 py-1 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
         >
           <span className={`inline-block ${rolling ? "animate-spin" : ""}`}>↻</span>{" "}
           New topic
@@ -110,20 +110,20 @@ export default function TopicCard({
           <label htmlFor="topic-seed" className="chip">
             Make a topic
           </label>
-          <div className="mt-2 flex flex-col gap-2 sm:flex-row">
+          <div className="mt-2 grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
             <input
               id="topic-seed"
               value={seed}
               onChange={(event) => setSeed(event.target.value)}
               disabled={disabled || rolling || generating}
               maxLength={500}
-              placeholder="Negotiating a raise, explaining quantum physics, wedding toast..."
-              className="min-w-0 flex-1 rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-accent disabled:cursor-not-allowed disabled:opacity-50"
+              placeholder="Try: wedding toast, investor demo, hard apology..."
+              className="min-h-11 min-w-0 rounded-xl border border-border bg-background px-3 py-2 text-base text-foreground outline-none transition placeholder:text-muted-foreground focus:border-accent disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm"
             />
             <button
               type="submit"
               disabled={disabled || rolling || generating}
-              className="btn-emboss rounded-full bg-accent px-5 py-2 text-sm font-semibold text-accent-foreground transition hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
+              className="btn-emboss min-h-11 rounded-full bg-accent px-5 py-2 text-sm font-semibold text-accent-foreground transition hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
             >
               {generating ? "Generating..." : "Generate"}
             </button>
@@ -135,7 +135,7 @@ export default function TopicCard({
       )}
 
       <p
-        className={`mt-3 text-xl font-medium leading-snug text-foreground transition-all duration-200 ${
+        className={`mt-3 [overflow-wrap:anywhere] text-lg font-medium leading-snug text-foreground transition-all duration-200 sm:text-xl ${
           rolling
             ? "translate-y-0.5 opacity-60 blur-[1px]"
             : "translate-y-0 opacity-100 blur-0"
@@ -150,7 +150,7 @@ export default function TopicCard({
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
-            className="mt-4 flex items-center gap-1.5 text-sm font-medium text-accent transition hover:text-accent-hover"
+            className="mt-4 flex min-h-10 items-center gap-1.5 text-sm font-medium text-accent transition hover:text-accent-hover"
           >
             <span
               className={`inline-block transition-transform duration-200 ${
@@ -169,7 +169,7 @@ export default function TopicCard({
           >
             <div className="overflow-hidden">
               <div
-                className="rounded-2xl border border-border bg-muted/40 p-4"
+                className="rounded-2xl border border-border bg-muted/40 p-3 sm:p-4"
                 style={{
                   boxShadow:
                     "inset 0 2px 4px rgba(0,0,0,0.08), inset 0 1px 2px rgba(0,0,0,0.06)",
@@ -190,7 +190,7 @@ export default function TopicCard({
                       className="flex gap-2 text-sm leading-relaxed text-foreground/80"
                     >
                       <span className="mt-0.5 text-accent">→</span>
-                      <span>{c}</span>
+                      <span className="min-w-0">{c}</span>
                     </li>
                   ))}
                 </ul>

@@ -264,14 +264,13 @@ export default function Recorder({ onComplete, disabled }: Props) {
   }, []);
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div ref={wrapRef} className="relative flex h-44 w-44 items-center justify-center">
+    <div className="flex flex-col items-center gap-3 sm:gap-4">
+      <div ref={wrapRef} className="relative flex h-36 w-36 items-center justify-center sm:h-44 sm:w-44">
         {isRecording && !reducedMotion && (
           <canvas
             ref={canvasRef}
             aria-hidden
-            className="pointer-events-none absolute -inset-80"
-            style={{ width: "calc(100% + 40rem)", height: "calc(100% + 40rem)" }}
+            className="pointer-events-none absolute -inset-48 sm:-inset-80"
           />
         )}
 
@@ -285,7 +284,7 @@ export default function Recorder({ onComplete, disabled }: Props) {
               ? "inset 0 3px 5px rgba(255,255,255,0.45), inset 0 -6px 10px rgba(80,0,10,0.55), inset 0 0 0 1px rgba(255,255,255,0.15)"
               : "inset 0 3px 5px rgba(255,255,255,0.45), inset 0 -6px 10px rgba(10,20,90,0.55), inset 0 0 0 1px rgba(255,255,255,0.15)",
           }}
-          className={`relative z-10 flex h-28 w-28 items-center justify-center rounded-full text-white transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+          className={`relative z-10 flex h-24 w-24 items-center justify-center rounded-full text-white transition-colors disabled:cursor-not-allowed disabled:opacity-40 sm:h-28 sm:w-28 ${
             isRecording
               ? "bg-gradient-to-br from-red-500 via-red-600 to-rose-700 hover:from-red-400 hover:via-red-500 hover:to-rose-600"
               : "bg-gradient-to-br from-indigo-500 via-indigo-600 to-indigo-700 hover:from-indigo-400 hover:via-indigo-500 hover:to-indigo-600"
@@ -293,7 +292,7 @@ export default function Recorder({ onComplete, disabled }: Props) {
           aria-label={isRecording ? "Stop recording" : "Start recording"}
         >
           {isRecording ? (
-            <span className="h-9 w-9 rounded-lg bg-white shadow-inner" />
+            <span className="h-8 w-8 rounded-lg bg-white shadow-inner sm:h-9 sm:w-9" />
           ) : (
             <svg
               viewBox="0 0 24 24"
@@ -302,7 +301,7 @@ export default function Recorder({ onComplete, disabled }: Props) {
               strokeWidth="1.8"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="h-11 w-11"
+              className="h-10 w-10 sm:h-11 sm:w-11"
               aria-hidden
             >
               <rect x="9" y="3" width="6" height="11" rx="3" />
@@ -313,7 +312,7 @@ export default function Recorder({ onComplete, disabled }: Props) {
         </button>
       </div>
 
-      <div className="font-display text-4xl font-bold tabular-nums tracking-tight text-foreground">
+      <div className="font-display text-3xl font-bold tabular-nums tracking-tight text-foreground sm:text-4xl">
         {formatDuration(elapsed)}
       </div>
 

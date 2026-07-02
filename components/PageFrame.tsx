@@ -27,7 +27,7 @@ export default function PageFrame({ children }: { children: React.ReactNode }) {
   return (
     <>
       <div
-        className="relative z-10 flex min-h-svh flex-col overflow-hidden rounded-[1.75rem] bg-background text-foreground"
+        className="relative z-10 flex min-h-svh flex-col overflow-hidden rounded-[1.25rem] bg-background text-foreground sm:rounded-[1.75rem]"
         style={{
           marginBottom: footerHeight,
           boxShadow: "0 24px 40px -16px rgba(0,0,0,0.35)",

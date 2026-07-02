@@ -24,9 +24,9 @@ type GeneratedTopicResponse = {
 
 function PracticeSkeleton() {
   return (
-    <main className="flex w-full flex-1 flex-col px-6 py-8">
-      <div className="grid flex-1 gap-6 md:grid-cols-2 md:items-stretch">
-        <section className="h-full w-full overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-sm">
+    <main className="flex w-full flex-1 flex-col px-3 py-4 sm:px-6 sm:py-8">
+      <div className="grid flex-1 gap-4 md:grid-cols-2 md:items-stretch md:gap-6">
+        <section className="h-full w-full overflow-hidden rounded-2xl border border-border bg-card p-4 shadow-sm sm:rounded-3xl sm:p-6">
           <div className="flex items-center justify-between">
             <div className="skeleton-shimmer h-8 w-32 rounded-full" />
             <div className="skeleton-shimmer h-5 w-24 rounded-full" />
@@ -35,7 +35,7 @@ function PracticeSkeleton() {
             <div className="skeleton-shimmer h-9 w-11/12 rounded-full" />
             <div className="skeleton-shimmer h-9 w-8/12 rounded-full" />
           </div>
-          <div className="mt-10 rounded-2xl border border-border bg-muted/40 p-4">
+          <div className="mt-8 rounded-2xl border border-border bg-muted/40 p-4 sm:mt-10">
             <div className="skeleton-shimmer h-6 w-24 rounded-full" />
             <div className="mt-3 space-y-2">
               <div className="skeleton-shimmer h-3.5 w-full rounded-full" />
@@ -45,7 +45,7 @@ function PracticeSkeleton() {
           </div>
         </section>
 
-        <section className="flex min-h-[26rem] flex-col items-center justify-center gap-5 rounded-3xl border border-border bg-card/60 px-6 py-14 shadow-sm md:min-h-[30rem]">
+        <section className="flex min-h-[20rem] flex-col items-center justify-center gap-5 rounded-2xl border border-border bg-card/60 px-4 py-8 shadow-sm sm:rounded-3xl sm:px-6 sm:py-14 md:min-h-[30rem]">
           <div className="skeleton-shimmer h-32 w-32 rounded-full" />
           <div className="skeleton-shimmer h-10 w-24 rounded-full" />
         </section>
@@ -224,8 +224,8 @@ export default function PracticePage() {
   }
 
   return (
-    <main className="flex w-full flex-1 flex-col px-6 py-8">
-      <div className="grid flex-1 gap-6 md:grid-cols-2 md:items-stretch">
+    <main className="flex w-full flex-1 flex-col px-3 py-4 sm:px-6 sm:py-8">
+      <div className="grid flex-1 gap-4 md:grid-cols-2 md:items-stretch md:gap-6">
         <TopicCard
           topic={topic || "…"}
           detail={topicDetail}
@@ -235,14 +235,14 @@ export default function PracticePage() {
         />
 
         {stage === "idle" && (
-          <section className="flex min-h-[26rem] flex-col items-center justify-center gap-4 rounded-3xl border border-border bg-card/60 px-6 py-14 shadow-sm md:min-h-[30rem]">
+          <section className="flex min-h-[20rem] flex-col items-center justify-center gap-4 rounded-2xl border border-border bg-card/60 px-4 py-8 shadow-sm sm:rounded-3xl sm:px-6 sm:py-14 md:min-h-[30rem]">
             <Recorder onComplete={handleComplete} />
           </section>
         )}
 
         {stage === "recorded" && recording && (
           <section className="flex flex-col gap-5">
-            <div className="rounded-3xl border border-border bg-card p-5 shadow-sm">
+            <div className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:rounded-3xl sm:p-5">
               <div className="mb-3 flex items-center justify-between">
                 <span className="chip">Listen back</span>
                 <span className="font-mono text-sm text-muted-foreground">
@@ -262,7 +262,7 @@ export default function PracticePage() {
 
             <FeedbackSlot />
 
-            <div className="flex flex-wrap gap-3">
+            <div className="grid gap-3 sm:flex sm:flex-wrap">
               <button
                 type="button"
                 onClick={transcribe}

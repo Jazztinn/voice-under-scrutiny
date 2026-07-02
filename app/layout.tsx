@@ -83,7 +83,7 @@ export default function RootLayout({
           <Nav />
           {children}
         </PageFrame>
-        <ThemeToggle className="fixed bottom-5 right-5 z-50" />
+        <ThemeToggle className="fixed bottom-3 right-3 z-50 sm:bottom-5 sm:right-5" />
       </body>
     </html>
   );
