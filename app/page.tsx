@@ -142,6 +142,23 @@ export default function PracticePage() {
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-8">
+      {stage === "idle" && (
+        <header className="flex flex-col gap-3">
+          <h1 className="font-display text-4xl font-extrabold leading-tight tracking-tight text-foreground sm:text-5xl">
+            Practice out loud.
+          </h1>
+          <p className="text-muted-foreground">
+            Be your own toughest audience — one pitch at a time.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <span className="chip">1 · topic</span>
+            <span className="chip">2 · record</span>
+            <span className="chip">3 · listen</span>
+            <span className="chip">4 · transcribe</span>
+          </div>
+        </header>
+      )}
+
       <TopicCard
         topic={topic || "…"}
         onNewTopic={newTopic}
@@ -149,18 +166,16 @@ export default function PracticePage() {
       />
 
       {stage === "idle" && (
-        <section className="flex flex-col items-center gap-4 rounded-2xl border border-border bg-card/60 py-10">
+        <section className="flex flex-col items-center gap-4 rounded-3xl border border-border bg-card/60 py-10 shadow-sm">
           <Recorder onComplete={handleComplete} />
         </section>
       )}
 
       {stage === "recorded" && recording && (
         <section className="flex flex-col gap-5">
-          <div className="rounded-2xl border border-border bg-card p-5">
+          <div className="rounded-3xl border border-border bg-card p-5 shadow-sm">
             <div className="mb-3 flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Listen back — be your own critic
-              </span>
+              <span className="chip">Listen back</span>
               <span className="font-mono text-sm text-muted-foreground">
                 {formatDuration(recording.durationSec)}
               </span>

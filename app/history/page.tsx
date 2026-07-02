@@ -36,11 +36,11 @@ export default function HistoryPage() {
       {pitches === null && <p className="text-muted-foreground">Loading…</p>}
 
       {pitches && pitches.length === 0 && (
-        <div className="rounded-2xl border border-dashed border-border p-10 text-center">
+        <div className="rounded-3xl border border-dashed border-border p-10 text-center">
           <p className="text-muted-foreground">No pitches yet.</p>
           <Link
             href="/"
-            className="mt-3 inline-block rounded-xl bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition hover:bg-accent-hover"
+            className="mt-3 inline-block rounded-full bg-accent px-5 py-2 text-sm font-semibold text-accent-foreground transition hover:bg-accent-hover"
           >
             Record your first pitch
           </Link>
@@ -53,7 +53,7 @@ export default function HistoryPage() {
           return (
             <li
               key={p.id}
-              className="rounded-2xl border border-border bg-card"
+              className="rounded-3xl border border-border bg-card shadow-sm"
             >
               <button
                 type="button"
@@ -78,8 +78,8 @@ export default function HistoryPage() {
                 <div className="flex flex-col gap-4 border-t border-border p-4">
                   <PitchPlayer blob={p.audioBlob} />
                   <div>
-                    <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Transcript
+                    <p className="mb-2">
+                      <span className="chip">Transcript</span>
                     </p>
                     {p.transcript ? (
                       <p className="whitespace-pre-wrap leading-relaxed text-foreground/90">

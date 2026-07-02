@@ -64,14 +64,14 @@ export default function SubmitTopicForm({ open, deviceId, onClose, onSubmitted }
 
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 p-4">
-      <div className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-border bg-card p-6">
+      <div className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-3xl border border-border bg-card p-6">
         <h2 className="font-display text-xl font-bold text-foreground">Submit a topic</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Give it a prompt, the scenario a speaker faces, and a few angles to try.
         </p>
 
-        <label className="mt-5 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Prompt
+        <label className="mt-5 block">
+          <span className="chip">Prompt</span>
         </label>
         <input
           value={prompt}
@@ -81,8 +81,8 @@ export default function SubmitTopicForm({ open, deviceId, onClose, onSubmitted }
           className="mt-1.5 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-accent"
         />
 
-        <label className="mt-4 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Scenario
+        <label className="mt-4 block">
+          <span className="chip">Scenario</span>
         </label>
         <textarea
           value={scenario}
@@ -93,8 +93,8 @@ export default function SubmitTopicForm({ open, deviceId, onClose, onSubmitted }
           className="mt-1.5 w-full resize-none rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-accent"
         />
 
-        <label className="mt-4 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Try these angles (optional)
+        <label className="mt-4 block">
+          <span className="chip">Try these angles (optional)</span>
         </label>
         <div className="mt-1.5 flex flex-col gap-2">
           {cases.map((c, i) => (
@@ -146,7 +146,7 @@ export default function SubmitTopicForm({ open, deviceId, onClose, onSubmitted }
             type="button"
             onClick={submit}
             disabled={submitting}
-            className="rounded-xl bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition hover:bg-accent-hover disabled:opacity-50"
+            className="rounded-full bg-accent px-5 py-2 text-sm font-semibold text-accent-foreground transition hover:bg-accent-hover disabled:opacity-50"
           >
             {submitting ? "Submitting…" : "Submit topic"}
           </button>

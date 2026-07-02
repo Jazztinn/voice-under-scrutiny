@@ -63,7 +63,7 @@ export default function CommunityTopicCard({ topic: initial, deviceId }: Props) 
   }
 
   return (
-    <div className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card p-5">
+    <div className="flex flex-col overflow-hidden rounded-3xl border border-border bg-card p-5 shadow-sm">
       <div className="flex items-start justify-between gap-3">
         <p className="text-lg font-medium leading-snug text-foreground">
           {topic.prompt}
@@ -101,17 +101,15 @@ export default function CommunityTopicCard({ topic: initial, deviceId }: Props) 
         }`}
       >
         <div className="overflow-hidden">
-          <div className="rounded-xl border border-border bg-muted/40 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Scenario
-            </p>
-            <p className="mt-1 text-sm leading-relaxed text-foreground/80">
+          <div className="rounded-2xl border border-border bg-muted/40 p-4">
+            <span className="chip">Scenario</span>
+            <p className="mt-2 text-sm leading-relaxed text-foreground/80">
               {topic.scenario}
             </p>
             {topic.cases.length > 0 && (
               <>
-                <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Try these angles
+                <p className="mt-4">
+                  <span className="chip">Try these angles</span>
                 </p>
                 <ul className="mt-2 space-y-1.5">
                   {topic.cases.map((c) => (
@@ -159,7 +157,7 @@ export default function CommunityTopicCard({ topic: initial, deviceId }: Props) 
         <button
           type="button"
           onClick={practiceThis}
-          className="rounded-xl bg-accent px-3 py-1.5 text-sm font-medium text-accent-foreground transition hover:bg-accent-hover"
+          className="rounded-full bg-accent px-4 py-1.5 text-sm font-semibold text-accent-foreground transition hover:bg-accent-hover"
         >
           Practice this
         </button>

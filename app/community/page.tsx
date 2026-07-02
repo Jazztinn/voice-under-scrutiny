@@ -32,19 +32,20 @@ export default function CommunityPage() {
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-8">
-      <div className="overflow-hidden rounded-2xl bg-highlight p-6">
-        <h1 className="font-display text-2xl font-extrabold text-highlight-foreground">
-          Community topics
+      <div className="overflow-hidden rounded-3xl bg-highlight p-6 shadow-sm sm:p-8">
+        <span className="chip">Community</span>
+        <h1 className="mt-3 font-display text-3xl font-extrabold leading-tight tracking-tight text-highlight-foreground sm:text-4xl">
+          Topics from other speakers.
         </h1>
-        <p className="mt-1.5 text-sm text-highlight-foreground/80">
-          Prompts submitted by other speakers. Upvote what&apos;s good, star what
-          you want to come back to, or add your own.
+        <p className="mt-2 text-sm text-highlight-foreground/80">
+          Upvote what&apos;s good, star what you want to come back to, or add
+          your own.
         </p>
         <button
           type="button"
           onClick={() => setFormOpen(true)}
           disabled={!deviceId}
-          className="mt-4 rounded-xl bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition hover:bg-accent-hover disabled:opacity-50"
+          className="mt-5 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition hover:bg-accent-hover disabled:opacity-50"
         >
           Submit a topic
         </button>
@@ -74,7 +75,7 @@ export default function CommunityPage() {
       )}
 
       {topics && topics.length === 0 && (
-        <div className="rounded-2xl border border-dashed border-border p-10 text-center">
+        <div className="rounded-3xl border border-dashed border-border p-10 text-center">
           <p className="text-muted-foreground">No community topics yet.</p>
           <p className="mt-1 text-sm text-muted-foreground">
             Be the first to submit one.

@@ -53,11 +53,9 @@ export default function TopicCard({ topic, onNewTopic, disabled }: Props) {
   }
 
   return (
-    <div className="w-full overflow-hidden rounded-2xl border border-border bg-card p-6">
+    <div className="w-full overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-sm">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold uppercase tracking-wider text-accent">
-          Your topic
-        </span>
+        <span className="chip">Your topic</span>
         <button
           type="button"
           onClick={handleNewTopic}
@@ -103,16 +101,14 @@ export default function TopicCard({ topic, onNewTopic, disabled }: Props) {
             }`}
           >
             <div className="overflow-hidden">
-              <div className="rounded-xl border border-border bg-muted/40 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Scenario
-                </p>
-                <p className="mt-1 text-sm leading-relaxed text-foreground/80">
+              <div className="rounded-2xl border border-border bg-muted/40 p-4">
+                <span className="chip">Scenario</span>
+                <p className="mt-2 text-sm leading-relaxed text-foreground/80">
                   {detail.scenario}
                 </p>
 
-                <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Try these angles
+                <p className="mt-4">
+                  <span className="chip">Try these angles</span>
                 </p>
                 <ul className="mt-2 space-y-1.5">
                   {detail.cases.map((c) => (

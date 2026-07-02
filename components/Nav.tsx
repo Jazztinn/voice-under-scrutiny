@@ -15,7 +15,7 @@ export default function Nav() {
   return (
     <header className="relative">
       <ThemeToggle className="absolute left-4 top-1/2 -translate-y-1/2" />
-      <nav className="mx-auto flex max-w-2xl items-center justify-between px-4 py-3">
+      <nav className="mx-auto flex max-w-2xl items-center justify-between py-3 pl-12 pr-4 md:px-4">
         <Link href="/" className="font-display font-bold text-foreground">
           Voice Under Scrutiny
         </Link>

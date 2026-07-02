@@ -18,11 +18,9 @@ export default function TranscriptView({
   source,
 }: Props) {
   return (
-    <div className="w-full rounded-2xl border border-border bg-card p-5">
+    <div className="w-full rounded-3xl border border-border bg-card p-5 shadow-sm">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Transcript
-        </span>
+        <span className="chip">Transcript</span>
         <div className="flex items-center gap-2">
           {!loading && transcript && source && (
             <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
