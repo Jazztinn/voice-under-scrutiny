@@ -28,17 +28,15 @@ export default function PageFrame({ children }: { children: React.ReactNode }) {
     <>
       <div
         className="relative z-10 flex min-h-svh flex-col overflow-hidden rounded-[1.75rem] bg-background text-foreground"
-        style={{ marginBottom: footerHeight }}
+        style={{
+          marginBottom: footerHeight,
+          boxShadow: "0 24px 40px -16px rgba(0,0,0,0.35)",
+        }}
       >
         {children}
       </div>
-      <div
-        ref={footerRef}
-        className="fixed inset-x-0 bottom-0 z-0 px-2 pb-2 sm:px-3 sm:pb-3"
-      >
-        <div className="overflow-hidden rounded-[1.75rem] bg-background text-foreground">
-          <Footer />
-        </div>
+      <div ref={footerRef} className="fixed inset-x-0 bottom-0 z-0 bg-frame">
+        <Footer />
       </div>
     </>
   );

@@ -15,6 +15,11 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  images: {
+    // Default flipped to "attachment" in this Next version, which makes
+    // next/image responses download instead of render inline.
+    contentDispositionType: "inline",
+  },
   async headers() {
     return [
       {

@@ -4,6 +4,14 @@
    not the OS `prefers-color-scheme` media query. */
 @custom-variant dark (&:where(.dark, .dark *));
 
+@font-face {
+  font-family: "Porcupine";
+  src: url("/fonts/Porcupine.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   /* Light: warm cream sheet on a periwinkle frame, butter-yellow highlights. */
   --frame: #6c6ce5;
@@ -54,6 +62,7 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-display: var(--font-baloo);
+  --font-brand: "Porcupine", var(--font-baloo);
 }
 
 body {
