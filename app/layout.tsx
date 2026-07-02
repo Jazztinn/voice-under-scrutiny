@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Baloo_2 } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import PageFrame from "@/components/PageFrame";
+import SmoothWheelScroll from "@/components/SmoothWheelScroll";
 import ThemeToggle from "@/components/ThemeToggle";
 import { THEME_INIT_SCRIPT } from "@/lib/theme";
 
@@ -77,6 +78,7 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-frame p-2 sm:p-3">
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        <SmoothWheelScroll />
         <PageFrame>
           <Nav />
           {children}
