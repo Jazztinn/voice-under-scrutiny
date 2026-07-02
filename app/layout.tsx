@@ -31,8 +31,16 @@ const DESCRIPTION =
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Voice Under Scrutiny — practice speaking out loud",
+    default: "Voice Under Scrutiny",
     template: "%s · Voice Under Scrutiny",
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/icon.png",
   },
   description: DESCRIPTION,
   keywords: [
