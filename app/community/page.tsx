@@ -6,6 +6,45 @@ import { fetchCommunityTopics, type CommunityTopic, type SortMode } from "@/lib/
 import CommunityTopicCard from "@/components/community/CommunityTopicCard";
 import SubmitTopicForm from "@/components/community/SubmitTopicForm";
 
+function CommunityTopicSkeleton() {
+  return (
+    <div className="flex flex-col overflow-hidden rounded-3xl border border-border bg-card p-5 shadow-sm">
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-1 flex-col gap-2.5">
+          <div className="skeleton-shimmer h-5 w-11/12 rounded-full" />
+          <div className="skeleton-shimmer h-5 w-7/12 rounded-full" />
+        </div>
+        <div className="skeleton-shimmer h-3 w-12 shrink-0 rounded-full" />
+      </div>
+
+      <div className="mt-4 flex items-center gap-2">
+        <div className="skeleton-shimmer h-4 w-4 rounded-full" />
+        <div className="skeleton-shimmer h-4 w-36 rounded-full" />
+      </div>
+
+      <div
+        className="mt-3 rounded-2xl border border-border bg-muted/40 p-4"
+        style={{
+          boxShadow:
+            "inset 0 2px 4px rgba(0,0,0,0.08), inset 0 1px 2px rgba(0,0,0,0.06)",
+        }}
+      >
+        <div className="skeleton-shimmer h-6 w-24 rounded-full" />
+        <div className="mt-3 space-y-2">
+          <div className="skeleton-shimmer h-3.5 w-full rounded-full" />
+          <div className="skeleton-shimmer h-3.5 w-10/12 rounded-full" />
+          <div className="skeleton-shimmer h-3.5 w-8/12 rounded-full" />
+        </div>
+      </div>
+
+      <div className="mt-4 flex items-center justify-between gap-3">
+        <div className="skeleton-shimmer h-9 w-32 rounded-full" />
+        <div className="skeleton-shimmer h-9 w-28 rounded-full" />
+      </div>
+    </div>
+  );
+}
+
 export default function CommunityPage() {
   const [deviceId, setDeviceId] = useState<string | null>(null);
   const [sort, setSort] = useState<SortMode>("top");
@@ -23,6 +62,7 @@ export default function CommunityPage() {
     if (!deviceId) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setTopics(null);
+    setError(null);
     fetchCommunityTopics(sort, deviceId)
       .then(setTopics)
       .catch((err) =>
@@ -71,7 +111,15 @@ export default function CommunityPage() {
       {error && <p className="text-sm text-red-400">{error}</p>}
 
       {!error && topics === null && (
-        <p className="text-muted-foreground">Loading…</p>
+        <div
+          className="flex flex-col gap-4"
+          aria-label="Loading community topics"
+          aria-busy="true"
+        >
+          {Array.from({ length: 3 }, (_, i) => (
+            <CommunityTopicSkeleton key={i} />
+          ))}
+        </div>
       )}
 
       {topics && topics.length === 0 && (
