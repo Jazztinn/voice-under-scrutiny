@@ -125,10 +125,10 @@ export default function Recorder({ onComplete, disabled }: Props) {
         )}
       </button>
 
-      <div className="font-mono text-lg tabular-nums text-neutral-300">
+      <div className="font-mono text-lg tabular-nums text-foreground/80">
         {formatDuration(elapsed)}
       </div>
-      <p className="text-sm text-neutral-400">
+      <p className="text-sm text-muted-foreground">
         {isRecording ? "Recording… tap to stop" : "Tap to record your pitch"}
       </p>
 

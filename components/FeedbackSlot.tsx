@@ -2,16 +2,16 @@
 // the UI + data model (`Pitch.feedback`) are ready for a later Claude integration.
 export default function FeedbackSlot() {
   return (
-    <div className="w-full rounded-2xl border border-dashed border-neutral-800 bg-neutral-900/30 p-5 opacity-70">
+    <div className="w-full rounded-2xl border border-dashed border-border bg-card/50 p-5 opacity-70">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
+        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           AI Feedback
         </span>
-        <span className="rounded-full bg-neutral-800 px-2 py-0.5 text-xs text-neutral-400">
+        <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
           Coming soon
         </span>
       </div>
-      <p className="mt-3 text-sm text-neutral-500">
+      <p className="mt-3 text-sm text-muted-foreground">
         Scoring for clarity, structure, filler words and pacing will land here.
       </p>
     </div>

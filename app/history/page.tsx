@@ -25,22 +25,22 @@ export default function HistoryPage() {
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-8">
       <div className="flex items-baseline justify-between">
-        <h1 className="text-2xl font-semibold text-neutral-100">Your pitch log</h1>
+        <h1 className="font-display text-2xl font-bold text-foreground">Your pitch log</h1>
         {pitches && pitches.length > 0 && (
-          <span className="text-sm text-neutral-500">
+          <span className="text-sm text-muted-foreground">
             {pitches.length} {pitches.length === 1 ? "pitch" : "pitches"}
           </span>
         )}
       </div>
 
-      {pitches === null && <p className="text-neutral-500">Loading…</p>}
+      {pitches === null && <p className="text-muted-foreground">Loading…</p>}
 
       {pitches && pitches.length === 0 && (
-        <div className="rounded-2xl border border-dashed border-neutral-800 p-10 text-center">
-          <p className="text-neutral-400">No pitches yet.</p>
+        <div className="rounded-2xl border border-dashed border-border p-10 text-center">
+          <p className="text-muted-foreground">No pitches yet.</p>
           <Link
             href="/"
-            className="mt-3 inline-block rounded-xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-500"
+            className="mt-3 inline-block rounded-xl bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition hover:bg-accent-hover"
           >
             Record your first pitch
           </Link>
@@ -53,7 +53,7 @@ export default function HistoryPage() {
           return (
             <li
               key={p.id}
-              className="rounded-2xl border border-neutral-800 bg-neutral-900/60"
+              className="rounded-2xl border border-border bg-card"
             >
               <button
                 type="button"
@@ -61,32 +61,32 @@ export default function HistoryPage() {
                 className="flex w-full items-start justify-between gap-4 p-4 text-left"
               >
                 <div className="min-w-0">
-                  <p className="truncate font-medium text-neutral-100">
+                  <p className="truncate font-medium text-foreground">
                     {p.topic}
                   </p>
-                  <p className="mt-1 text-xs text-neutral-500">
+                  <p className="mt-1 text-xs text-muted-foreground">
                     {formatDate(p.createdAt)} · {formatDuration(p.durationSec)}
                     {p.transcript ? ` · ${wordCount(p.transcript)} words` : ""}
                   </p>
                 </div>
-                <span className="mt-1 shrink-0 text-neutral-500">
+                <span className="mt-1 shrink-0 text-muted-foreground">
                   {open ? "▲" : "▼"}
                 </span>
               </button>
 
               {open && (
-                <div className="flex flex-col gap-4 border-t border-neutral-800 p-4">
+                <div className="flex flex-col gap-4 border-t border-border p-4">
                   <PitchPlayer blob={p.audioBlob} />
                   <div>
-                    <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-neutral-500">
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                       Transcript
                     </p>
                     {p.transcript ? (
-                      <p className="whitespace-pre-wrap leading-relaxed text-neutral-200">
+                      <p className="whitespace-pre-wrap leading-relaxed text-foreground/90">
                         {p.transcript}
                       </p>
                     ) : (
-                      <p className="text-sm text-neutral-500">
+                      <p className="text-sm text-muted-foreground">
                         Not transcribed.
                       </p>
                     )}
