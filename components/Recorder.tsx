@@ -43,6 +43,16 @@ export default function Recorder({ onComplete, disabled }: Props) {
   const [isRecording, setIsRecording] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mq = matchMedia("(prefers-reduced-motion: reduce)");
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setReducedMotion(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   const recorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -283,7 +293,7 @@ export default function Recorder({ onComplete, disabled }: Props) {
   return (
     <div className="flex flex-col items-center gap-3">
       <div ref={wrapRef} className="relative flex h-32 w-32 items-center justify-center">
-        {isRecording && (
+        {isRecording && !reducedMotion && (
           <canvas
             ref={canvasRef}
             aria-hidden
