@@ -18,44 +18,42 @@ export default function CommunityTopicCard({ topic: initial, deviceId }: Props) 
   const router = useRouter();
   const [topic, setTopic] = useState(initial);
   const [open, setOpen] = useState(false);
-  const [busy, setBusy] = useState(false);
 
+  // Voting/favoriting update the UI immediately (same toggle-off math the
+  // server applies) instead of waiting on the round-trip — otherwise a click
+  // looks like it did nothing, and a second click before the first response
+  // lands reads as "un-vote" instead of "still working".
   async function handleVote(value: 1 | -1) {
-    if (busy) return;
-    setBusy(true);
-    const prevVote = topic.myVote;
+    const before = topic;
+    const nextMyVote: 1 | -1 | 0 = before.myVote === value ? 0 : value;
+    let upvotes = before.upvotes;
+    let downvotes = before.downvotes;
+    if (before.myVote === 1) upvotes -= 1;
+    if (before.myVote === -1) downvotes -= 1;
+    if (nextMyVote === 1) upvotes += 1;
+    if (nextMyVote === -1) downvotes += 1;
+    setTopic({ ...before, myVote: nextMyVote, upvotes, downvotes, score: upvotes - downvotes });
+
     try {
-      const { myVote } = await voteOnTopic(topic.id, deviceId, value);
-      setTopic((t) => {
-        let upvotes = t.upvotes;
-        let downvotes = t.downvotes;
-        if (prevVote === 1) upvotes -= 1;
-        if (prevVote === -1) downvotes -= 1;
-        if (myVote === 1) upvotes += 1;
-        if (myVote === -1) downvotes += 1;
-        return { ...t, myVote, upvotes, downvotes, score: upvotes - downvotes };
-      });
+      await voteOnTopic(before.id, deviceId, value);
     } catch {
-      // Leave state as-is; a stale count beats a broken UI here.
-    } finally {
-      setBusy(false);
+      setTopic(before);
     }
   }
 
   async function handleFavorite() {
-    if (busy) return;
-    setBusy(true);
+    const before = topic;
+    const favorited = !before.favorited;
+    setTopic({
+      ...before,
+      favorited,
+      favorite_count: before.favorite_count + (favorited ? 1 : -1),
+    });
+
     try {
-      const { favorited } = await toggleFavorite(topic.id, deviceId);
-      setTopic((t) => ({
-        ...t,
-        favorited,
-        favorite_count: t.favorite_count + (favorited ? 1 : -1),
-      }));
+      await toggleFavorite(before.id, deviceId);
     } catch {
-      // no-op
-    } finally {
-      setBusy(false);
+      setTopic(before);
     }
   }
 
