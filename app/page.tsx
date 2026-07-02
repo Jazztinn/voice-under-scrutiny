@@ -17,6 +17,11 @@ type Stage = "idle" | "recorded";
 
 type QueuedTopic = Topic;
 
+type GeneratedTopicResponse = {
+  topic?: Topic;
+  error?: string;
+};
+
 function PracticeSkeleton() {
   return (
     <main className="flex w-full flex-1 flex-col px-6 py-8">
@@ -104,6 +109,20 @@ export default function PracticePage() {
   function newTopic() {
     setTopicDetail(null);
     setTopic((prev) => randomTopic(prev));
+  }
+
+  async function generateTopic(seed: string) {
+    const res = await fetch("/api/topics/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ seed }),
+    });
+    const data = (await res.json()) as GeneratedTopicResponse;
+    if (!res.ok || !data.topic) {
+      throw new Error(data.error ?? "Could not generate a topic.");
+    }
+    setTopic(data.topic.prompt);
+    setTopicDetail(data.topic);
   }
 
   function reset() {
@@ -211,6 +230,7 @@ export default function PracticePage() {
           topic={topic || "…"}
           detail={topicDetail}
           onNewTopic={newTopic}
+          onGenerateTopic={generateTopic}
           disabled={stage === "recorded"}
         />
 

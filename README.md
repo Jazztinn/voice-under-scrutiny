@@ -28,6 +28,7 @@
 Public speaking improves through repetition, playback, and concrete evidence. Most practice tools either stop at a timer or require accounts, uploads, and opaque storage. Voice Under Scrutiny keeps the loop small and useful:
 
 - Get an impromptu speaking topic.
+- Generate a custom topic from any seed prompt with Groq in cloud or Ollama locally.
 - Record from the microphone with a live audio-reactive ring.
 - Listen back before judging the transcript.
 - Transcribe with Groq Whisper, then fall back to in-browser Whisper when the server key is unavailable.
@@ -39,7 +40,7 @@ No login is required. Recordings and transcripts stay in the user's browser unle
 
 | Step | What happens |
 |---|---|
-| Topic | The app serves a curated prompt or a community-submitted prompt. |
+| Topic | The app serves a curated prompt, a community-submitted prompt, or an AI-generated prompt. |
 | Record | `MediaRecorder` captures microphone audio and Web Audio drives the recording visualizer. |
 | Playback | The speaker reviews the raw answer before reading the transcript. |
 | Transcribe | `/api/transcribe` proxies audio to Groq Whisper; on failure, a Web Worker runs browser-local Whisper. |
@@ -79,6 +80,7 @@ Device IDs are self-reported, so these limits are guardrails rather than a secur
 | Recording | `MediaRecorder`, Web Audio `AnalyserNode`, canvas visualizer |
 | Local storage | IndexedDB via `idb` |
 | Transcription | Groq Whisper server route, Hugging Face Transformers browser fallback |
+| Topic generation | Groq chat completions in cloud, Ollama fallback for local development |
 | Community backend | Supabase Postgres with server-side route handlers |
 | Deployment | Vercel |
 
@@ -108,8 +110,22 @@ Recording requires microphone permission and a secure context. `localhost` is ac
 | `SUPABASE_URL` | Required for community board | Supabase project URL used by `/api/community/*`. |
 | `SUPABASE_ANON_KEY` | Required for community board | Supabase anon key used by server-side community routes. Configure RLS policies in Supabase before public deployment. |
 | `NEXT_PUBLIC_SITE_URL` | Optional | Canonical URL for metadata, sitemap, and robots output. Defaults to the Vercel demo URL. |
+| `TOPIC_GENERATION_PROVIDER` | Optional | `auto`, `groq`, or `ollama`. Defaults to `auto`: use Groq when `GROQ_API_KEY` is present, otherwise Ollama locally. |
+| `GROQ_TEXT_MODEL` | Optional | Groq model used by `/api/topics/generate`. Defaults to `openai/gpt-oss-20b` for strict JSON schema output. |
+| `OLLAMA_BASE_URL` | Optional | Local or self-hosted Ollama server URL for topic generation. Defaults to `http://127.0.0.1:11434`. |
+| `OLLAMA_MODEL` | Optional | Ollama model used by `/api/topics/generate` when the provider is Ollama. Defaults to `llama3.2:1b`. |
 
 The first in-browser Whisper run downloads a quantized model and caches it. Expect a larger first transcription on a fresh browser profile.
+
+For cloud AI topic generation on Vercel, set `GROQ_API_KEY`. The app will use that key for both Whisper transcription and text topic generation.
+
+For local Ollama topic generation without a Groq key, install Ollama and pull the default small model:
+
+```bash
+ollama pull llama3.2:1b
+```
+
+Keep Ollama running while the Next dev server is running. In hosted deployments, do not use the default local Ollama URL; use Groq or point `OLLAMA_BASE_URL` at a reachable self-hosted Ollama-compatible server.
 
 ## Useful scripts
 
