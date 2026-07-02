@@ -138,7 +138,7 @@ export default function SubmitTopicForm({ open, deviceId, onClose, onSubmitted }
               reset();
               onClose();
             }}
-            className="rounded-xl px-4 py-2 text-sm font-medium text-muted-foreground transition hover:bg-muted"
+            className="btn-emboss-outline rounded-xl border border-border bg-card px-4 py-2 text-sm font-medium text-muted-foreground transition hover:bg-muted"
           >
             Cancel
           </button>
@@ -146,7 +146,7 @@ export default function SubmitTopicForm({ open, deviceId, onClose, onSubmitted }
             type="button"
             onClick={submit}
             disabled={submitting}
-            className="rounded-full bg-accent px-5 py-2 text-sm font-semibold text-accent-foreground transition hover:bg-accent-hover disabled:opacity-50"
+            className="btn-emboss rounded-full bg-accent px-5 py-2 text-sm font-semibold text-accent-foreground transition hover:bg-accent-hover disabled:opacity-50"
           >
             {submitting ? "Submitting…" : "Submit topic"}
           </button>

@@ -165,7 +165,7 @@ export default function CommunityTopicCard({ topic: initial, deviceId }: Props) 
         <button
           type="button"
           onClick={practiceThis}
-          className="rounded-full bg-accent px-4 py-1.5 text-sm font-semibold text-accent-foreground transition hover:bg-accent-hover"
+          className="btn-emboss rounded-full bg-accent px-4 py-1.5 text-sm font-semibold text-accent-foreground transition hover:bg-accent-hover"
         >
           Practice this
         </button>

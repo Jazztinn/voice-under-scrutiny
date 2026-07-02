@@ -40,7 +40,7 @@ export default function HistoryPage() {
           <p className="text-muted-foreground">No pitches yet.</p>
           <Link
             href="/"
-            className="mt-3 inline-block rounded-full bg-accent px-5 py-2 text-sm font-semibold text-accent-foreground transition hover:bg-accent-hover"
+            className="btn-emboss mt-3 inline-block rounded-full bg-accent px-5 py-2 text-sm font-semibold text-accent-foreground transition hover:bg-accent-hover"
           >
             Record your first pitch
           </Link>

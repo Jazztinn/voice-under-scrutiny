@@ -182,7 +182,7 @@ export default function PracticePage() {
                 type="button"
                 onClick={transcribe}
                 disabled={transcribing}
-                className="rounded-full bg-indigo-600 px-6 py-3 text-base font-semibold text-white transition hover:bg-indigo-500 disabled:opacity-50"
+                className="btn-emboss rounded-full bg-accent px-6 py-3 text-base font-semibold text-accent-foreground transition hover:bg-accent-hover disabled:opacity-50"
               >
                 {transcript ? "Re-transcribe" : "Transcribe"}
               </button>
@@ -190,14 +190,14 @@ export default function PracticePage() {
                 type="button"
                 onClick={save}
                 disabled={saved}
-                className="rounded-full bg-emerald-600 px-6 py-3 text-base font-semibold text-white transition hover:bg-emerald-500 disabled:opacity-50"
+                className="btn-emboss rounded-full bg-emerald-600 px-6 py-3 text-base font-semibold text-white transition hover:bg-emerald-500 disabled:opacity-50"
               >
                 {saved ? "Saved ✓" : "Save to log"}
               </button>
               <button
                 type="button"
                 onClick={nextRound}
-                className="rounded-full border border-border px-6 py-3 text-base font-semibold text-foreground transition hover:bg-muted"
+                className="btn-emboss-outline rounded-full border border-border bg-card px-6 py-3 text-base font-semibold text-foreground transition hover:bg-muted"
               >
                 {saved ? "Next topic" : "Discard"}
               </button>

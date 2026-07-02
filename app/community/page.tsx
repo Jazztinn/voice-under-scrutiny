@@ -45,7 +45,7 @@ export default function CommunityPage() {
           type="button"
           onClick={() => setFormOpen(true)}
           disabled={!deviceId}
-          className="mt-5 rounded-full bg-black px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-black/80 disabled:opacity-50"
+          className="btn-emboss mt-5 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground transition hover:bg-accent-hover disabled:opacity-50"
         >
           Submit a topic
         </button>
@@ -59,7 +59,7 @@ export default function CommunityPage() {
             onClick={() => setSort(s)}
             className={`rounded-full px-3 py-1.5 text-sm font-medium capitalize transition ${
               sort === s
-                ? "bg-accent text-accent-foreground"
+                ? "btn-emboss bg-accent text-accent-foreground"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground"
             }`}
           >
