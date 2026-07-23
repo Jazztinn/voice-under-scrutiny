@@ -6,6 +6,7 @@ export const runtime = "nodejs";
 const DEFAULT_OLLAMA_BASE_URL = "http://127.0.0.1:11434";
 const DEFAULT_OLLAMA_MODEL = "llama3.2:1b";
 const DEFAULT_GROQ_MODEL = "openai/gpt-oss-20b";
+const DEFAULT_GEMINI_MODEL = "gemini-2.5-flash";
 const MAX_SEED_CHARS = 500;
 
 type GenerateRequest = {
@@ -21,6 +22,12 @@ type GroqChatResponse = {
     message?: {
       content?: unknown;
     };
+  }>;
+};
+
+type GeminiResponse = {
+  candidates?: Array<{
+    content?: { parts?: Array<{ text?: unknown }> };
   }>;
 };
 
@@ -87,14 +94,60 @@ Make it specific, speakable in 60-120 seconds, and useful for voice practice. Tr
 
 function selectedProvider() {
   const configured = process.env.TOPIC_GENERATION_PROVIDER ?? "auto";
-  if (!["auto", "groq", "ollama"].includes(configured)) {
+  if (!["auto", "gemini", "groq", "ollama"].includes(configured)) {
     throw new Error("Invalid TOPIC_GENERATION_PROVIDER.");
   }
-  if (configured === "groq" || configured === "ollama") return configured;
+  if (configured !== "auto") return configured;
+  if (process.env.GEMINI_API_KEY) return "gemini";
   if (process.env.GROQ_API_KEY) return "groq";
   if (process.env.OLLAMA_BASE_URL) return "ollama";
   if (process.env.VERCEL) return "groq";
   return "ollama";
+}
+
+async function generateWithGemini(seed: string) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    return NextResponse.json(
+      { error: "Server missing GEMINI_API_KEY for cloud topic generation." },
+      { status: 500 }
+    );
+  }
+
+  const model = process.env.GEMINI_TEXT_MODEL ?? DEFAULT_GEMINI_MODEL;
+  try {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: "You create concise, useful public-speaking practice topics. Return only valid JSON." }] },
+          contents: [{ parts: [{ text: buildPrompt(seed) }] }],
+          generationConfig: {
+            temperature: 0.2,
+            maxOutputTokens: 512,
+            responseMimeType: "application/json",
+            responseSchema: topicSchema,
+          },
+        }),
+        signal: AbortSignal.timeout(30000),
+      }
+    );
+    if (!res.ok) {
+      console.error("Gemini topic generation failed:", res.status, await res.text());
+      return NextResponse.json({ error: "Gemini could not generate a topic." }, { status: 502 });
+    }
+    const data = (await res.json()) as GeminiResponse;
+    const content = data.candidates?.[0]?.content?.parts?.map((part) => part.text).find((text): text is string => typeof text === "string");
+    if (!content) return NextResponse.json({ error: "Gemini returned an invalid response." }, { status: 502 });
+    const parsed = parseTopic(JSON.parse(content));
+    if (!parsed) return NextResponse.json({ error: "Gemini returned an incomplete topic." }, { status: 502 });
+    return NextResponse.json({ topic: parsed, model, provider: "gemini" });
+  } catch (err) {
+    console.error("Gemini topic request failed:", err);
+    return NextResponse.json({ error: "Could not reach Gemini." }, { status: 502 });
+  }
 }
 
 async function generateWithGroq(seed: string) {
@@ -290,6 +343,7 @@ export async function POST(req: Request) {
 
   try {
     const provider = selectedProvider();
+    if (provider === "gemini") return generateWithGemini(seed);
     if (provider === "groq") return generateWithGroq(seed);
     return generateWithOllama(seed);
   } catch (err) {
