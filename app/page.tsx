@@ -11,7 +11,7 @@ import { addPitch, type Pitch } from "@/lib/db";
 import { formatDuration } from "@/lib/format";
 import { transcribeLocally } from "@/lib/localTranscribe";
 
-type Source = "groq" | "in-browser" | null;
+type Source = "cloud" | "in-browser" | null;
 
 type Stage = "idle" | "recorded";
 
@@ -162,15 +162,15 @@ export default function PracticePage() {
     if (!recording) return;
     setTranscribing(true);
     setTranscribeError(null);
-    setStatusText("Transcribing with Groq…");
+    setStatusText("Transcribing with cloud AI…");
     try {
       const text = await tryGroq(recording.blob);
       setTranscript(text);
-      setSource("groq");
+      setSource("cloud");
     } catch {
       // Groq unavailable — fall back to in-browser Whisper.
       try {
-        setStatusText("Groq unavailable — transcribing in your browser…");
+        setStatusText("Cloud AI unavailable — transcribing in your browser…");
         const text = await transcribeLocally(recording.blob, (s) => {
           if (s.stage === "loading-model") {
             setStatusText(
@@ -235,7 +235,7 @@ export default function PracticePage() {
         />
 
         {stage === "idle" && (
-          <section className="flex min-h-[20rem] flex-col items-center justify-center gap-4 rounded-2xl border border-border bg-card/60 px-4 py-8 shadow-sm sm:rounded-3xl sm:px-6 sm:py-14 md:min-h-[30rem]">
+          <section className="flex min-h-[20rem] flex-col items-center justify-center gap-4 overflow-visible rounded-2xl border border-border bg-card/60 px-4 py-8 shadow-sm sm:rounded-3xl sm:px-6 sm:py-14 md:min-h-[30rem]">
             <Recorder onComplete={handleComplete} />
           </section>
         )}
@@ -258,9 +258,10 @@ export default function PracticePage() {
               error={transcribeError}
               statusText={statusText}
               source={source}
+              onChange={setTranscript}
             />
 
-            <FeedbackSlot />
+            <FeedbackSlot transcript={transcript} />
 
             <div className="grid gap-3 sm:flex sm:flex-wrap">
               <button
