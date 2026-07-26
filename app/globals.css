@@ -69,6 +69,7 @@ body {
   background: var(--frame);
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
 }
 
 .btn-emboss {

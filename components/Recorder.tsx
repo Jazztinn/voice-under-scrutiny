@@ -38,10 +38,13 @@ const STRANDS = [
 ];
 
 const VERTS = 160;
-const RING_SCALE = 3;
+// Keep the animated rings inside the canvas bitmap. A larger scale makes the
+// canvas itself clip the top/bottom of the waveform on tall mobile layouts.
+const RING_SCALE = 2.15;
 
 export default function Recorder({ onComplete, disabled }: Props) {
   const [isRecording, setIsRecording] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -233,6 +236,7 @@ export default function Recorder({ onComplete, disabled }: Props) {
         const durationSec = (Date.now() - startedAtRef.current) / 1000;
         cleanup();
         setIsRecording(false);
+        setIsPaused(false);
         if (blob.size > 0) {
           onComplete({ blob, mimeType: type, durationSec });
         } else {
@@ -244,6 +248,7 @@ export default function Recorder({ onComplete, disabled }: Props) {
       recorderRef.current = recorder;
       startedAtRef.current = Date.now();
       setElapsed(0);
+      setIsPaused(false);
       setIsRecording(true);
       timerRef.current = setInterval(() => {
         setElapsed((Date.now() - startedAtRef.current) / 1000);
@@ -251,6 +256,7 @@ export default function Recorder({ onComplete, disabled }: Props) {
     } catch (err) {
       cleanup();
       setIsRecording(false);
+      setIsPaused(false);
       if (err instanceof DOMException && err.name === "NotAllowedError") {
         setError("Microphone access denied. Allow it in your browser and retry.");
       } else {
@@ -263,6 +269,13 @@ export default function Recorder({ onComplete, disabled }: Props) {
     recorderRef.current?.stop();
   }, []);
 
+  const togglePause = useCallback(() => {
+    const recorder = recorderRef.current;
+    if (!recorder) return;
+    if (recorder.state === "recording") { recorder.pause(); setIsPaused(true); }
+    else if (recorder.state === "paused") { recorder.resume(); setIsPaused(false); }
+  }, []);
+
   return (
     <div className="flex flex-col items-center gap-3 sm:gap-4">
       <div ref={wrapRef} className="relative flex h-36 w-36 items-center justify-center sm:h-44 sm:w-44">
@@ -270,7 +283,7 @@ export default function Recorder({ onComplete, disabled }: Props) {
           <canvas
             ref={canvasRef}
             aria-hidden
-            className="pointer-events-none absolute -inset-48 sm:-inset-80"
+            className="pointer-events-none absolute -inset-24 h-[calc(100%+12rem)] w-[calc(100%+12rem)] sm:-inset-40 sm:h-[calc(100%+20rem)] sm:w-[calc(100%+20rem)]"
           />
         )}
 
@@ -312,7 +325,9 @@ export default function Recorder({ onComplete, disabled }: Props) {
         </button>
       </div>
 
-      <div className="font-display text-3xl font-bold tabular-nums tracking-tight text-foreground sm:text-4xl">
+      {isRecording && <button type="button" onClick={togglePause} className="rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground hover:bg-muted">{isPaused ? "Resume" : "Pause"}</button>}
+
+      <div className="relative z-20 mt-10 font-display text-3xl font-bold tabular-nums tracking-tight text-foreground sm:mt-14 sm:text-4xl">
         {formatDuration(elapsed)}
       </div>
 
