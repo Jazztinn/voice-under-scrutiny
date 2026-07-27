@@ -14,7 +14,8 @@ const TOPIC_GLOBAL_WINDOW_SEC = 60;
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const sort = searchParams.get("sort") === "new" ? "new" : "top";
+  const sortParam = searchParams.get("sort");
+  const sort = sortParam === "new" || sortParam === "favorites" ? sortParam : "top";
   const rawDeviceId = searchParams.get("deviceId");
   const deviceId = isUuid(rawDeviceId) ? rawDeviceId : null;
 
@@ -40,7 +41,10 @@ export async function GET(req: Request) {
   const { data: topics, error } = await query;
   if (error) {
     console.error("Failed to load community topics:", error);
-    return NextResponse.json({ error: "Failed to load topics." }, { status: 500 });
+    const message = error.code === "42P01"
+      ? "Community tables are not set up in Supabase yet."
+      : "Could not reach the community database.";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 
   let myVotes = new Map<string, number>();
@@ -60,7 +64,7 @@ export async function GET(req: Request) {
     favorited: myFavorites.has(t.id as string),
   }));
 
-  return NextResponse.json({ topics: result });
+  return NextResponse.json({ topics: sort === "favorites" ? result.filter((topic) => topic.favorited) : result });
 }
 
 export async function POST(req: Request) {

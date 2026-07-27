@@ -17,7 +17,7 @@ export type NewCommunityTopic = Pick<
   "id" | "prompt" | "scenario" | "cases" | "created_at"
 >;
 
-export type SortMode = "top" | "new";
+export type SortMode = "top" | "new" | "favorites";
 
 export async function fetchCommunityTopics(
   sort: SortMode,

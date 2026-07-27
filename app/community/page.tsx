@@ -92,7 +92,7 @@ export default function CommunityPage() {
       </div>
 
       <div className="flex items-center gap-1 self-start rounded-full border border-border bg-card p-1">
-        {(["top", "new"] as const).map((s) => (
+        {(["top", "new", "favorites"] as const).map((s) => (
           <button
             key={s}
             type="button"
@@ -103,7 +103,7 @@ export default function CommunityPage() {
                 : "text-muted-foreground hover:bg-muted hover:text-foreground"
             }`}
           >
-            {s === "top" ? "Top" : "Newest"}
+            {s === "top" ? "Top" : s === "new" ? "Newest" : "Favorites"}
           </button>
         ))}
       </div>
