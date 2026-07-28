@@ -28,10 +28,12 @@
 Public speaking improves through repetition, playback, and concrete evidence. Most practice tools either stop at a timer or require accounts, uploads, and opaque storage. Voice Under Scrutiny keeps the loop small and useful:
 
 - Get an impromptu speaking topic.
-- Generate a custom topic from any seed prompt with Groq in cloud or Ollama locally.
+- Generate a custom topic from any seed prompt with Gemini in cloud or Ollama locally.
 - Record from the microphone with a live audio-reactive ring.
 - Listen back before judging the transcript.
-- Transcribe with Groq Whisper, then fall back to in-browser Whisper when the server key is unavailable.
+- Transcribe with Gemini audio, then fall back to Groq Whisper or in-browser Whisper when cloud AI is unavailable.
+- Get AI coaching on clarity, structure, pacing, filler words, strengths, and a concrete next step.
+- Edit transcripts before requesting feedback, and browse favorite community topics.
 - Save attempts locally in IndexedDB so the speaker owns the practice log.
 
 No login is required. Recordings and transcripts stay in the user's browser unless audio is explicitly sent to the transcription route.
@@ -168,7 +170,7 @@ Vercel Hobby request bodies are capped at roughly 4.5MB. A short Opus pitch reco
 
 ## Roadmap
 
-- Add transcript feedback for clarity, structure, filler words, and pacing.
+- Add account-backed pitch sync and moderation tools.
 - Add Supabase migrations for repeatable community setup.
 - Add export/import for local pitch history.
 - Add optional direct-to-storage flow for longer recordings.
