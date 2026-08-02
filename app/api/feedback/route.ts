@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export const runtime = "nodejs";
 
 function localFeedback(transcript: string) {
-  const words = transcript.toLowerCase().match(/[a-z']+/g) ?? [];
+  const words: string[] = transcript.toLowerCase().match(/[a-z']+/g) ?? [];
   const fillers = ["um", "uh", "like", "you know", "basically", "actually"].filter((word) => {
     if (word.includes(" ")) return transcript.toLowerCase().includes(word);
     return words.includes(word);
