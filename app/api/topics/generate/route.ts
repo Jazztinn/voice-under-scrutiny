@@ -127,8 +127,9 @@ async function generateWithGemini(seed: string) {
           generationConfig: {
             temperature: 0.2,
             maxOutputTokens: 512,
+            // Keep provider-side JSON mode portable; Gemini deployments can
+            // reject OpenAPI schema fields such as additionalProperties.
             responseMimeType: "application/json",
-            responseSchema: topicSchema,
           },
         }),
         signal: AbortSignal.timeout(30000),
