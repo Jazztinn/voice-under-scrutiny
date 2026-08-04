@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 const DEFAULT_OLLAMA_BASE_URL = "http://127.0.0.1:11434";
 const DEFAULT_OLLAMA_MODEL = "llama3.2:1b";
 const DEFAULT_GROQ_MODEL = "openai/gpt-oss-20b";
-const DEFAULT_GEMINI_MODEL = "gemini-2.5-flash-lite";
+const DEFAULT_GEMINI_MODEL = "gemini-2.5-flash";
 const MAX_SEED_CHARS = 500;
 
 type GenerateRequest = {
@@ -134,6 +134,46 @@ Make the result speakable in 60-120 seconds and useful for voice practice. The p
 }
 
 function fallbackTopic(seed: string): Topic {
+  const normalized = seed.toLowerCase();
+  if (
+    /student|class|teacher|professor|lecture|discussion/.test(normalized) &&
+    /irrelevant|joke|interrupt|off[ -]?topic|disrupt/.test(normalized)
+  ) {
+    return {
+      prompt: "Respond as the instructor when a student interrupts a photosynthesis lesson by asking, \"If plants make food, why can't they make pizza?\" Redirect them without embarrassing them.",
+      scenario: "You are teaching a Grade 10 biology class before an exam; several students laugh, and you need to regain focus while keeping participation safe.",
+      cases: [
+        "Acknowledge the humor without rewarding disruption",
+        "Connect the joke briefly to glucose production",
+        "Set a clear boundary and resume the lesson",
+      ],
+    };
+  }
+  if (
+    /coworker|colleague|meeting|presentation|workplace|manager/.test(normalized) &&
+    /interrupt|challenge|question|heckle|disrupt/.test(normalized)
+  ) {
+    return {
+      prompt: "Respond when a coworker interrupts your quarterly budget presentation for the third time to challenge a number already explained, then regain the floor professionally.",
+      scenario: "You are presenting a cost-reduction plan to department leaders with ten minutes left and two key recommendations still uncovered.",
+      cases: [
+        "Acknowledge the concern in one sentence",
+        "Set a clear time for questions",
+        "Bridge directly back to the next recommendation",
+      ],
+    };
+  }
+  if (/family|parent|sibling|relative|dinner/.test(normalized)) {
+    return {
+      prompt: "Respond when a sibling turns Sunday dinner into an argument about who should care for an aging parent, and move the family toward one practical next step.",
+      scenario: "Four relatives are at the table, old resentments are surfacing, and your parent can hear the conversation from the next room.",
+      cases: [
+        "Lower the temperature without dismissing concern",
+        "Separate immediate needs from old grievances",
+        "Propose one decision and a follow-up conversation",
+      ],
+    };
+  }
   return {
     prompt: cleanText(`Respond aloud to this brief: ${seed}`, 360),
     scenario: "Speak for 60-120 seconds. Follow every role, audience, setting, tone, and format constraint in the brief.",
