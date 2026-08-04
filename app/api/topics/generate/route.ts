@@ -56,7 +56,13 @@ const topicSchema = {
 } as const;
 
 function cleanText(value: string, maxLength: number) {
-  return value.replace(/\s+/g, " ").trim().slice(0, maxLength);
+  const cleaned = value.replace(/\s+/g, " ").trim();
+  if (cleaned.length <= maxLength) return cleaned;
+  const clipped = cleaned.slice(0, maxLength + 1);
+  const boundary = Math.max(clipped.lastIndexOf(". "), clipped.lastIndexOf("? "), clipped.lastIndexOf("! "));
+  if (boundary >= Math.floor(maxLength * 0.6)) return clipped.slice(0, boundary + 1);
+  const wordBoundary = clipped.lastIndexOf(" ");
+  return `${clipped.slice(0, wordBoundary > 0 ? wordBoundary : maxLength).replace(/[,:;\s]+$/, "")}.`;
 }
 
 function parseJsonResponse(value: string): unknown {
@@ -91,7 +97,7 @@ function parseTopic(value: unknown): Topic | null {
   }
   if (!Array.isArray(raw.cases)) return null;
 
-  const prompt = cleanText(raw.prompt, 220);
+  const prompt = cleanText(raw.prompt, 360);
   const scenario = cleanText(raw.scenario, 360);
   const cases = raw.cases
     .filter((item): item is string => typeof item === "string")
@@ -111,12 +117,12 @@ Return only JSON with:
 - scenario: one sentence giving the audience, setting, or pressure
 - cases: exactly three short, concrete angles to try
 
-Interpret the whole brief. Preserve its subject, requested role or relationship, audience, setting, tone, point of view, question, and other constraints. Resolve casual wording and minor grammar without changing intent. If the brief is broad, choose a specific angle. Make the result speakable in 60-120 seconds and useful for voice practice. Do not answer the topic; create the speaking exercise.`;
+Interpret the whole brief. Preserve its subject, requested role or relationship, audience, setting, tone, point of view, question, and other constraints. Resolve casual wording and minor grammar without changing intent. If the brief is broad, choose a specific angle. Make the result speakable in 60-120 seconds and useful for voice practice. The prompt must tell the user what to speak about; never begin answering it. Prefer an imperative such as Explain, Describe, Argue, Persuade, Teach, Recount, or Respond.`;
 }
 
 function fallbackTopic(seed: string): Topic {
   return {
-    prompt: cleanText(`Respond aloud to this brief: ${seed}`, 220),
+    prompt: cleanText(`Respond aloud to this brief: ${seed}`, 360),
     scenario: "Speak for 60-120 seconds. Follow every role, audience, setting, tone, and format constraint in the brief.",
     cases: [
       "Identify the exact subject and question",
