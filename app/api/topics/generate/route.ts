@@ -178,7 +178,7 @@ async function generateWithGemini(seed: string) {
 
   const model = process.env.GEMINI_TEXT_MODEL ?? DEFAULT_GEMINI_MODEL;
   try {
-    const res = await fetch(
+    const requestGemini = () => fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`,
       {
         method: "POST",
@@ -195,9 +195,15 @@ async function generateWithGemini(seed: string) {
         signal: AbortSignal.timeout(30000),
       }
     );
+    let res = await requestGemini();
+    if (res.status === 429 || res.status >= 500) {
+      console.error("Gemini topic generation retrying:", res.status, await res.text());
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      res = await requestGemini();
+    }
     if (!res.ok) {
       console.error("Gemini topic generation failed:", res.status, await res.text());
-      return geminiFallback(seed, "upstream-error");
+      return geminiFallback(seed, `upstream-${res.status}`);
     }
     const data = (await res.json()) as GeminiResponse;
     const candidate = data.candidates?.[0];
