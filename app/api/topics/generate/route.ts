@@ -78,7 +78,16 @@ function parseJsonResponse(value: string): unknown {
     const start = normalized.indexOf("{");
     const end = normalized.lastIndexOf("}");
     if (start < 0 || end <= start) throw new Error("No JSON object found.");
-    return JSON.parse(normalized.slice(start, end + 1));
+    const objectText = normalized.slice(start, end + 1);
+    const repaired = objectText
+      .replace(/[“”]/g, '"')
+      .replace(/[‘’]/g, "'")
+      .replace(/,\s*([}\]])/g, "$1");
+    try {
+      return JSON.parse(repaired);
+    } catch {
+      return JSON.parse(repaired.replace(/'([^']*)'/g, '"$1"'));
+    }
   }
 }
 
