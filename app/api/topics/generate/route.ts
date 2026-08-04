@@ -58,6 +58,11 @@ function cleanText(value: string, maxLength: number) {
   return value.replace(/\s+/g, " ").trim().slice(0, maxLength);
 }
 
+function parseJsonResponse(value: string): unknown {
+  const normalized = value.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+  return JSON.parse(normalized);
+}
+
 function parseTopic(value: unknown): Topic | null {
   if (!value || typeof value !== "object") return null;
   const raw = value as Partial<Record<keyof Topic, unknown>> & { topic?: unknown };
@@ -142,7 +147,14 @@ async function generateWithGemini(seed: string) {
     const data = (await res.json()) as GeminiResponse;
     const content = data.candidates?.[0]?.content?.parts?.map((part) => part.text).find((text): text is string => typeof text === "string");
     if (!content) return NextResponse.json({ error: "Gemini returned an invalid response." }, { status: 502 });
-    const parsed = parseTopic(JSON.parse(content));
+    let rawTopic: unknown;
+    try {
+      rawTopic = parseJsonResponse(content);
+    } catch {
+      console.error("Gemini returned malformed topic JSON:", content);
+      return NextResponse.json({ error: "Gemini returned malformed topic JSON." }, { status: 502 });
+    }
+    const parsed = parseTopic(rawTopic);
     if (!parsed) return NextResponse.json({ error: "Gemini returned an incomplete topic." }, { status: 502 });
     return NextResponse.json({ topic: parsed, model, provider: "gemini" });
   } catch (err) {
