@@ -97,7 +97,11 @@ function parseTopic(value: unknown): Topic | null {
   }
   if (!Array.isArray(raw.cases)) return null;
 
-  const prompt = cleanText(raw.prompt, 360);
+  const generatedPrompt = cleanText(raw.prompt, 330);
+  if (!generatedPrompt) return null;
+  const prompt = /^(answer|argue|compare|contrast|debate|defend|describe|discuss|explain|imagine|introduce|persuade|pitch|present|recount|respond|teach|tell)\b/i.test(generatedPrompt)
+    ? generatedPrompt
+    : cleanText(`Discuss this topic aloud: ${generatedPrompt}`, 360);
   const scenario = cleanText(raw.scenario, 360);
   const cases = raw.cases
     .filter((item): item is string => typeof item === "string")
@@ -171,7 +175,7 @@ async function generateWithGemini(seed: string) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          systemInstruction: { parts: [{ text: "You create concise, useful public-speaking practice topics. Return only valid JSON." }] },
+          systemInstruction: { parts: [{ text: "Create concise public-speaking exercises, never answers. The prompt field must begin with an imperative verb telling the user what to say. Return only valid JSON." }] },
           contents: [{ parts: [{ text: buildPrompt(seed) }] }],
           generationConfig: {
             temperature: 0.2,
