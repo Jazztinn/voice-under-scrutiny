@@ -60,7 +60,14 @@ function cleanText(value: string, maxLength: number) {
 
 function parseJsonResponse(value: string): unknown {
   const normalized = value.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
-  return JSON.parse(normalized);
+  try {
+    return JSON.parse(normalized);
+  } catch {
+    const start = normalized.indexOf("{");
+    const end = normalized.lastIndexOf("}");
+    if (start < 0 || end <= start) throw new Error("No JSON object found.");
+    return JSON.parse(normalized.slice(start, end + 1));
+  }
 }
 
 function parseTopic(value: unknown): Topic | null {
