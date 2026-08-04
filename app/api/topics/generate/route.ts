@@ -117,11 +117,20 @@ function buildPrompt(seed: string) {
   return `Create one public-speaking practice topic from this user brief: ${JSON.stringify(seed)}
 
 Return only JSON with:
-- prompt: one sentence the user should answer aloud
-- scenario: one sentence giving the audience, setting, or pressure
+- prompt: one concrete sentence the user should answer aloud
+- scenario: one concrete sentence giving the audience, setting, interruption or conflict, and pressure
 - cases: exactly three short, concrete angles to try
 
-Interpret the whole brief. Preserve its subject, requested role or relationship, audience, setting, tone, point of view, question, and other constraints. Resolve casual wording and minor grammar without changing intent. If the brief is broad, choose a specific angle. Make the result speakable in 60-120 seconds and useful for voice practice. The prompt must tell the user what to speak about; never begin answering it. Prefer an imperative such as Explain, Describe, Argue, Persuade, Teach, Recount, or Respond.`;
+Interpret the whole brief. Preserve its subject, requested role or relationship, audience, setting, tone, point of view, question, conflict, and other constraints. Resolve casual wording and minor grammar without changing intent.
+
+Specificity rules:
+- Never merely paraphrase a vague brief.
+- Invent plausible missing details: name the exact discussion subject, audience, setting, interruption or objection, and stakes when the user leaves them open.
+- If someone asks, says, jokes, objects, or interrupts, include the exact words or a concrete example of what they say.
+- Make prompt and scenario usable as an immediate role-play. Avoid placeholders and generic phrases such as "an unrelated question," "a difficult situation," or "a topic."
+- Keep invented details compatible with the user's intent; do not add unrelated drama.
+
+Make the result speakable in 60-120 seconds and useful for voice practice. The prompt must tell the user what to speak about; never begin answering it. Prefer an imperative such as Explain, Describe, Argue, Persuade, Teach, Recount, or Respond.`;
 }
 
 function fallbackTopic(seed: string): Topic {
