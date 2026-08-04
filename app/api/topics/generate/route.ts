@@ -54,6 +54,18 @@ const topicSchema = {
   additionalProperties: false,
 } as const;
 
+// Gemini accepts responseSchema, but rejects OpenAI/Ollama-only fields such as
+// additionalProperties. Keep provider schemas separate.
+const geminiTopicSchema = {
+  type: "OBJECT",
+  properties: {
+    prompt: { type: "STRING" },
+    scenario: { type: "STRING" },
+    cases: { type: "ARRAY", items: { type: "STRING" } },
+  },
+  required: ["prompt", "scenario", "cases"],
+} as const;
+
 function cleanText(value: string, maxLength: number) {
   return value.replace(/\s+/g, " ").trim().slice(0, maxLength);
 }
@@ -139,9 +151,8 @@ async function generateWithGemini(seed: string) {
           generationConfig: {
             temperature: 0.2,
             maxOutputTokens: 512,
-            // Keep provider-side JSON mode portable; Gemini deployments can
-            // reject OpenAPI schema fields such as additionalProperties.
             responseMimeType: "application/json",
+            responseSchema: geminiTopicSchema,
           },
         }),
         signal: AbortSignal.timeout(30000),
