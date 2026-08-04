@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 const DEFAULT_OLLAMA_BASE_URL = "http://127.0.0.1:11434";
 const DEFAULT_OLLAMA_MODEL = "llama3.2:1b";
 const DEFAULT_GROQ_MODEL = "openai/gpt-oss-20b";
-const DEFAULT_GEMINI_MODEL = "gemini-2.5-flash";
+const DEFAULT_GEMINI_MODEL = "gemini-2.5-flash-lite";
 const MAX_SEED_CHARS = 500;
 
 type GenerateRequest = {
