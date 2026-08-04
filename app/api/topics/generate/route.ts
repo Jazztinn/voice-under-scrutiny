@@ -99,7 +99,7 @@ function parseTopic(value: unknown): Topic | null {
 
   const generatedPrompt = cleanText(raw.prompt, 330);
   if (!generatedPrompt) return null;
-  const prompt = /^(answer|argue|compare|contrast|debate|defend|describe|discuss|explain|imagine|introduce|persuade|pitch|present|recount|respond|teach|tell)\b/i.test(generatedPrompt)
+  const prompt = /^(answer|argue|compare|contrast|debate|defend|deliver|describe|discuss|explain|imagine|introduce|outline|persuade|pitch|present|recount|respond|share|summarize|teach|tell|welcome)\b/i.test(generatedPrompt)
     ? generatedPrompt
     : cleanText(`Discuss this topic aloud: ${generatedPrompt}`, 360);
   const scenario = cleanText(raw.scenario, 360);
